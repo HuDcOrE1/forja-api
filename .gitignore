@@ -1,0 +1,71 @@
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### Spring Boot ###
+*.log
+logs/
+hs_err_pid*
+replay_pid*
+
+### IDEs ###
+
+# STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# IntelliJ
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### Build ###
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Sistema Operacional ###
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+### Arquivos temporários ###
+*.tmp
+*.bak
+*.swp
+
+### Ambiente ###
+.env
+.env.*
+application-local.yml
+application-local.properties
+application-dev.yml
+application-dev.properties
+
+### Cobertura/Testes ###
+coverage/
+jacoco.exec

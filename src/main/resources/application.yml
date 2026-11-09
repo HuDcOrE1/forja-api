@@ -1,0 +1,24 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/forja
+    username: postgres
+    password: 123
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+jwt:
+  secret: 6AE3EC75AF7F4816B2A60F0B4D1E3127D7D8B7789D4D8E5F0A7B9C3D4E5F6A7
+  expiration: 86400000

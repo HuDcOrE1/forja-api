@@ -1,0 +1,40 @@
+-- CLIENTE
+
+ALTER TABLE cliente
+ADD COLUMN criado_por VARCHAR(255);
+
+ALTER TABLE cliente
+ADD COLUMN alterado_por VARCHAR(255);
+
+-- PRODUTO
+
+ALTER TABLE produto
+ADD COLUMN criado_por VARCHAR(255);
+
+ALTER TABLE produto
+ADD COLUMN alterado_por VARCHAR(255);
+
+ALTER TABLE produto
+ADD COLUMN alterado_em TIMESTAMP;
+
+-- VENDA
+
+ALTER TABLE venda
+ADD COLUMN criado_por VARCHAR(255);
+
+ALTER TABLE venda
+ADD COLUMN alterado_por VARCHAR(255);
+
+ALTER TABLE venda
+ADD COLUMN alterado_em TIMESTAMP;
+
+-- AGENDAMENTO
+
+ALTER TABLE agendamento
+ADD COLUMN criado_por VARCHAR(255);
+
+ALTER TABLE agendamento
+ADD COLUMN alterado_por VARCHAR(255);
+
+ALTER TABLE agendamento
+ADD COLUMN alterado_em TIMESTAMP;
