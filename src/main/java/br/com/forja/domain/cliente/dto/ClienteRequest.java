@@ -11,16 +11,16 @@ public record ClienteRequest(
 
         @NotBlank(message = "CPF é obrigatório")
         @Size(
-        min = 11,
-        max = 11,
-        message = "CPF deve possuir 11 dígitos"
+                min = 11,
+                max = 11,
+                message = "CPF deve possuir 11 dígitos"
         )
         String cpf,
 
         @NotBlank(message = "Telefone é obrigatório")
         @Size(
-        max = 30,
-        message = "Telefone inválido"
+                max = 30,
+                message = "Telefone inválido"
         )
         String telefone,
 
@@ -28,7 +28,31 @@ public record ClienteRequest(
         @NotBlank(message = "Email é obrigatório")
         String email,
 
-        String cr
+        String cr,
+
+        Boolean ativo,
+
+        @Size(
+                max = 8,
+                message = "CEP inválido"
+        )
+        String cep,
+
+        String logradouro,
+
+        String numero,
+
+        String complemento,
+
+        String bairro,
+
+        String cidade,
+
+        @Size(
+                max = 2,
+                message = "UF inválida"
+        )
+        String uf
 
 ) {
 }

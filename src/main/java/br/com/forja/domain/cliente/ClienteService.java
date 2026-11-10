@@ -26,13 +26,15 @@ public class ClienteService {
 
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() ->
-                            new ClienteNaoEncontradoException(id)
-                        );
+                        new ClienteNaoEncontradoException(id)
+                );
 
         return toResponse(cliente);
     }
 
     public ClienteResponse salvar(ClienteRequest request) {
+
+        System.out.println(request);
 
         Cliente cliente = Cliente.builder()
                 .nome(request.nome())
@@ -40,8 +42,22 @@ public class ClienteService {
                 .telefone(request.telefone())
                 .email(request.email())
                 .cr(request.cr())
-                .ativo(true)
+                .ativo(
+                    request.ativo() != null
+                        ? request.ativo()
+                        : true
+                )
+
+                .cep(request.cep())
+                .logradouro(request.logradouro())
+                .numero(request.numero())
+                .complemento(request.complemento())
+                .bairro(request.bairro())
+                .cidade(request.cidade())
+                .uf(request.uf())
+
                 .build();
+
         cliente = repository.save(cliente);
 
         return toResponse(cliente);
@@ -54,14 +70,23 @@ public class ClienteService {
 
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() ->
-                            new ClienteNaoEncontradoException(id)
-                        );
+                        new ClienteNaoEncontradoException(id)
+                );
 
         cliente.setNome(request.nome());
         cliente.setCpf(request.cpf());
         cliente.setTelefone(request.telefone());
         cliente.setEmail(request.email());
         cliente.setCr(request.cr());
+        cliente.setAtivo(request.ativo());
+
+        cliente.setCep(request.cep());
+        cliente.setLogradouro(request.logradouro());
+        cliente.setNumero(request.numero());
+        cliente.setComplemento(request.complemento());
+        cliente.setBairro(request.bairro());
+        cliente.setCidade(request.cidade());
+        cliente.setUf(request.uf());
 
         cliente = repository.save(cliente);
 
@@ -74,7 +99,7 @@ public class ClienteService {
                 repository.findById(id)
                         .orElseThrow(
                                 () ->
-                                new ClienteNaoEncontradoException(id)
+                                        new ClienteNaoEncontradoException(id)
                         );
 
         cliente.setAtivo(false);
@@ -87,13 +112,34 @@ public class ClienteService {
     ) {
 
         return new ClienteResponse(
+
                 cliente.getId(),
+
                 cliente.getNome(),
+
                 cliente.getCpf(),
+
                 cliente.getTelefone(),
+
                 cliente.getEmail(),
+
                 cliente.getCr(),
-                cliente.getAtivo()
+
+                cliente.getAtivo(),
+
+                cliente.getCep(),
+
+                cliente.getLogradouro(),
+
+                cliente.getNumero(),
+
+                cliente.getComplemento(),
+
+                cliente.getBairro(),
+
+                cliente.getCidade(),
+
+                cliente.getUf()
         );
     }
 }
