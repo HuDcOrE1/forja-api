@@ -20,306 +20,245 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RelatorioService {
 
-    private final ProdutoRepository produtoRepository;
-    private final VendaRepository vendaRepository;
-    private final ClienteRepository clienteRepository;
-    private final AgendamentoRepository agendamentoRepository;
-    private final RaiaRepository raiaRepository;
+        private final ProdutoRepository produtoRepository;
+        private final VendaRepository vendaRepository;
+        private final ClienteRepository clienteRepository;
+        private final AgendamentoRepository agendamentoRepository;
+        private final RaiaRepository raiaRepository;
 
-    public List<RelatorioEstoqueResponse> estoque(
-            RelatorioEstoqueRequest filtro,
-            int page,
-            int size,
-            String sort,
-            String direction
-    ) {
+        public List<RelatorioEstoqueResponse> estoque(
+                        RelatorioEstoqueRequest filtro,
+                        int page,
+                        int size,
+                        String sort,
+                        String direction) {
 
-        List<RelatorioEstoqueResponse> resultado =
-                produtoRepository.findByAtivoTrue()
-                        .stream()
-                        .filter(produto ->
-                                filtro == null
-                                || filtro.estoqueMinimo() == null
-                                || produto.getEstoque() >= filtro.estoqueMinimo()
-                        )
-                        .filter(produto ->
-                                filtro == null
-                                || filtro.categoriaId() == null
-                                || produto.getCategoria()
-                                .getId()
-                                .equals(filtro.categoriaId())
-                        )
-                        .map(this::estoqueResponse)
-                        .toList();
+                List<RelatorioEstoqueResponse> resultado = produtoRepository.findByAtivoTrue()
+                                .stream()
+                                .filter(produto -> filtro == null
+                                                || filtro.estoqueMinimo() == null
+                                                || produto.getEstoque() >= filtro.estoqueMinimo())
+                                .filter(produto -> filtro == null
+                                                || filtro.categoriaId() == null
+                                                || produto.getCategoria()
+                                                                .getId()
+                                                                .equals(filtro.categoriaId()))
+                                .map(this::estoqueResponse)
+                                .toList();
 
-        Comparator<RelatorioEstoqueResponse> comparator =
-                switch (sort) {
+                Comparator<RelatorioEstoqueResponse> comparator = switch (sort) {
 
-                    case "estoque" ->
-                            Comparator.comparing(
-                                    RelatorioEstoqueResponse::estoque
-                            );
+                        case "estoque" ->
+                                Comparator.comparing(
+                                                RelatorioEstoqueResponse::estoque);
 
-                    case "valorVenda" ->
-                            Comparator.comparing(
-                                    RelatorioEstoqueResponse::valorVenda
-                            );
+                        case "valorVenda" ->
+                                Comparator.comparing(
+                                                RelatorioEstoqueResponse::valorVenda);
 
-                    case "valorTotalEstoque" ->
-                            Comparator.comparing(
-                                    RelatorioEstoqueResponse::valorTotalEstoque
-                            );
+                        case "valorTotalEstoque" ->
+                                Comparator.comparing(
+                                                RelatorioEstoqueResponse::valorTotalEstoque);
 
-                    default ->
-                            Comparator.comparing(
-                                    RelatorioEstoqueResponse::produto
-                            );
+                        default ->
+                                Comparator.comparing(
+                                                RelatorioEstoqueResponse::produto);
                 };
 
-        if ("DESC".equalsIgnoreCase(direction)) {
-            comparator = comparator.reversed();
+                if ("DESC".equalsIgnoreCase(direction)) {
+                        comparator = comparator.reversed();
+                }
+
+                return resultado.stream()
+                                .sorted(comparator)
+                                .skip((long) page * size)
+                                .limit(size)
+                                .toList();
         }
 
-        return resultado.stream()
-                .sorted(comparator)
-                .skip((long) page * size)
-                .limit(size)
-                .toList();
-    }
+        public List<RelatorioVendaResponse> vendas(
+                        FiltroVendaRequest filtro,
+                        int page,
+                        int size,
+                        String sort,
+                        String direction) {
 
-    public List<RelatorioVendaResponse> vendas(
-            FiltroVendaRequest filtro,
-            int page,
-            int size,
-            String sort,
-            String direction
-    ) {
+                List<RelatorioVendaResponse> resultado = vendaRepository.findAllByOrderByCriadoEmDesc()
+                                .stream()
+                                .filter(venda -> filtro == null
+                                                || filtro.clienteId() == null
+                                                || (venda.getCliente() != null
+                                                                && venda.getCliente()
+                                                                                .getId()
+                                                                                .equals(filtro.clienteId())))
+                                .filter(venda -> filtro == null
+                                                || filtro.formaPagamento() == null
+                                                || venda.getFormaPagamento()
+                                                                .equalsIgnoreCase(
+                                                                                filtro.formaPagamento()))
+                                .filter(venda -> filtro == null
+                                                || filtro.status() == null
+                                                || venda.getStatus()
+                                                                .equalsIgnoreCase(
+                                                                                filtro.status()))
+                                .filter(venda -> filtro == null
+                                                || filtro.inicio() == null
+                                                || !venda.getCriadoEm()
+                                                                .isBefore(filtro.inicio()))
+                                .filter(venda -> filtro == null
+                                                || filtro.fim() == null
+                                                || !venda.getCriadoEm()
+                                                                .isAfter(filtro.fim()))
+                                .map(this::vendaResponse)
+                                .toList();
 
-        List<RelatorioVendaResponse> resultado =
-                vendaRepository.findAllByOrderByCriadoEmDesc()
-                        .stream()
-                        .filter(venda ->
-                                filtro == null
-                                || filtro.clienteId() == null
-                                || (
-                                    venda.getCliente() != null
-                                    && venda.getCliente()
-                                    .getId()
-                                    .equals(filtro.clienteId())
-                                )
-                        )
-                        .filter(venda ->
-                                filtro == null
-                                || filtro.formaPagamento() == null
-                                || venda.getFormaPagamento()
-                                .equalsIgnoreCase(
-                                        filtro.formaPagamento()
-                                )
-                        )
-                        .filter(venda ->
-                                filtro == null
-                                || filtro.status() == null
-                                || venda.getStatus()
-                                .equalsIgnoreCase(
-                                        filtro.status()
-                                )
-                        )
-                        .filter(venda ->
-                                filtro == null
-                                || filtro.inicio() == null
-                                || !venda.getCriadoEm()
-                                .isBefore(filtro.inicio())
-                        )
-                        .filter(venda ->
-                                filtro == null
-                                || filtro.fim() == null
-                                || !venda.getCriadoEm()
-                                .isAfter(filtro.fim())
-                        )
-                        .map(this::vendaResponse)
-                        .toList();
+                Comparator<RelatorioVendaResponse> comparator = switch (sort) {
 
-        Comparator<RelatorioVendaResponse> comparator =
-                switch (sort) {
+                        case "valorTotal" ->
+                                Comparator.comparing(
+                                                RelatorioVendaResponse::valorTotal);
 
-                    case "valorTotal" ->
-                            Comparator.comparing(
-                                    RelatorioVendaResponse::valorTotal
-                            );
+                        case "cliente" ->
+                                Comparator.comparing(
+                                                RelatorioVendaResponse::cliente,
+                                                Comparator.nullsLast(String::compareTo));
 
-                    case "cliente" ->
-                            Comparator.comparing(
-                                    RelatorioVendaResponse::cliente,
-                                    Comparator.nullsLast(String::compareTo)
-                            );
-
-                    default ->
-                            Comparator.comparing(
-                                    RelatorioVendaResponse::dataVenda
-                            );
+                        default ->
+                                Comparator.comparing(
+                                                RelatorioVendaResponse::dataVenda);
                 };
 
-        if ("DESC".equalsIgnoreCase(direction)) {
-            comparator = comparator.reversed();
+                if ("DESC".equalsIgnoreCase(direction)) {
+                        comparator = comparator.reversed();
+                }
+
+                return resultado.stream()
+                                .sorted(comparator)
+                                .skip((long) page * size)
+                                .limit(size)
+                                .toList();
         }
 
-        return resultado.stream()
-                .sorted(comparator)
-                .skip((long) page * size)
-                .limit(size)
-                .toList();
-    }
+        public RelatorioClienteResponse clientes() {
 
-    public RelatorioClienteResponse clientes() {
+                long ativos = clienteRepository.findByAtivoTrue()
+                                .size();
 
-        long ativos =
-                clienteRepository.findByAtivoTrue()
-                        .size();
+                long total = clienteRepository.count();
 
-        long total =
-                clienteRepository.count();
+                long inativos = total - ativos;
 
-        long inativos =
-                total - ativos;
-
-        return new RelatorioClienteResponse(
-                total,
-                ativos,
-                inativos
-        );
-    }
-
-    public List<RelatorioAgendamentoResponse> agendamentos(
-            FiltroAgendamentoRequest filtro,
-            int page,
-            int size,
-            String sort,
-            String direction
-    ) {
-
-        List<RelatorioAgendamentoResponse> resultado =
-                agendamentoRepository.findAll()
-                        .stream()
-                        .filter(a ->
-                                filtro == null
-                                || filtro.clienteId() == null
-                                || a.getCliente()
-                                .getId()
-                                .equals(filtro.clienteId())
-                        )
-                        .filter(a ->
-                                filtro == null
-                                || filtro.raiaId() == null
-                                || a.getRaia()
-                                .getId()
-                                .equals(filtro.raiaId())
-                        )
-                        .filter(a ->
-                                filtro == null
-                                || filtro.status() == null
-                                || a.getStatus()
-                                .equalsIgnoreCase(
-                                        filtro.status()
-                                )
-                        )
-                        .map(this::agendamentoResponse)
-                        .toList();
-
-        Comparator<RelatorioAgendamentoResponse> comparator =
-                Comparator.comparing(
-                        RelatorioAgendamentoResponse::inicio
-                );
-
-        if ("DESC".equalsIgnoreCase(direction)) {
-            comparator = comparator.reversed();
+                return new RelatorioClienteResponse(
+                                total,
+                                ativos,
+                                inativos);
         }
 
-        return resultado.stream()
-                .sorted(comparator)
-                .skip((long) page * size)
-                .limit(size)
-                .toList();
-    }
+        public List<RelatorioAgendamentoResponse> agendamentos(
+                        FiltroAgendamentoRequest filtro,
+                        int page,
+                        int size,
+                        String sort,
+                        String direction) {
 
-    public List<RelatorioRaiaResponse> raias() {
+                List<RelatorioAgendamentoResponse> resultado = agendamentoRepository.findAll()
+                                .stream()
+                                .filter(a -> filtro == null
+                                                || filtro.clienteId() == null
+                                                || a.getCliente()
+                                                                .getId()
+                                                                .equals(filtro.clienteId()))
+                                .filter(a -> filtro == null
+                                                || filtro.raiaId() == null
+                                                || a.getRaia()
+                                                                .getId()
+                                                                .equals(filtro.raiaId()))
+                                .filter(a -> filtro == null
+                                                || filtro.status() == null
+                                                || a.getStatus()
+                                                                .equalsIgnoreCase(
+                                                                                filtro.status()))
+                                .map(this::agendamentoResponse)
+                                .toList();
 
-        List<Agendamento> agendamentos =
-                agendamentoRepository.findAll();
+                Comparator<RelatorioAgendamentoResponse> comparator = Comparator.comparing(
+                                RelatorioAgendamentoResponse::inicio);
 
-        return raiaRepository.findAll()
-                .stream()
-                .map(raia -> {
+                if ("DESC".equalsIgnoreCase(direction)) {
+                        comparator = comparator.reversed();
+                }
 
-                    long total =
-                            agendamentos.stream()
-                                    .filter(a ->
-                                            a.getRaia()
-                                                    .getId()
-                                                    .equals(
-                                                            raia.getId()
-                                                    )
-                                    )
-                                    .count();
+                return resultado.stream()
+                                .sorted(comparator)
+                                .skip((long) page * size)
+                                .limit(size)
+                                .toList();
+        }
 
-                    return new RelatorioRaiaResponse(
-                            raia.getId(),
-                            raia.getDescricao(),
-                            total
-                    );
-                })
-                .toList();
-    }
+        public List<RelatorioRaiaResponse> raias() {
 
-    private RelatorioEstoqueResponse estoqueResponse(
-            Produto produto
-    ) {
+                List<Agendamento> agendamentos = agendamentoRepository.findAll();
 
-        BigDecimal total =
-                produto.getValorVenda()
-                        .multiply(
-                                BigDecimal.valueOf(
-                                        produto.getEstoque()
-                                )
-                        );
+                return raiaRepository.findAll()
+                                .stream()
+                                .map(raia -> {
 
-        return new RelatorioEstoqueResponse(
-                produto.getId(),
-                produto.getCodigo(),
-                produto.getNome(),
-                produto.getEstoque(),
-                produto.getValorVenda(),
-                total
-        );
-    }
+                                        long total = agendamentos.stream()
+                                                        .filter(a -> a.getRaia()
+                                                                        .getId()
+                                                                        .equals(
+                                                                                        raia.getId()))
+                                                        .count();
 
-    private RelatorioVendaResponse vendaResponse(
-            Venda venda
-    ) {
+                                        return new RelatorioRaiaResponse(
+                                                        raia.getId(),
+                                                        raia.getDescricao(),
+                                                        total);
+                                })
+                                .toList();
+        }
 
-        return new RelatorioVendaResponse(
-                venda.getId(),
-                venda.getCliente() != null
-                        ? venda.getCliente().getNome()
-                        : null,
-                venda.getUsuario().getNome(),
-                venda.getValorTotal(),
-                venda.getFormaPagamento(),
-                venda.getStatus(),
-                venda.getCriadoEm()
-        );
-    }
+        private RelatorioEstoqueResponse estoqueResponse(
+                        Produto produto) {
 
-    private RelatorioAgendamentoResponse agendamentoResponse(
-            Agendamento agendamento
-    ) {
+                BigDecimal total = produto.getValorVenda()
+                                .multiply(
+                                                BigDecimal.valueOf(
+                                                                produto.getEstoque()));
 
-        return new RelatorioAgendamentoResponse(
-                agendamento.getId(),
-                agendamento.getCliente().getNome(),
-                agendamento.getRaia().getDescricao(),
-                agendamento.getDataInicio(),
-                agendamento.getDataFim(),
-                agendamento.getStatus()
-        );
-    }
+                return new RelatorioEstoqueResponse(
+                                produto.getId(),
+                                produto.getCodigo(),
+                                produto.getNome(),
+                                produto.getEstoque(),
+                                produto.getValorVenda(),
+                                total);
+        }
+
+        private RelatorioVendaResponse vendaResponse(
+                        Venda venda) {
+
+                return new RelatorioVendaResponse(
+                                venda.getId(),
+                                venda.getCliente() != null
+                                                ? venda.getCliente().getNome()
+                                                : null,
+                                venda.getUsuario().getNome(),
+                                venda.getValorTotal(),
+                                venda.getFormaPagamento(),
+                                venda.getStatus(),
+                                venda.getCriadoEm());
+        }
+
+        private RelatorioAgendamentoResponse agendamentoResponse(
+                        Agendamento agendamento) {
+
+                return new RelatorioAgendamentoResponse(
+                                agendamento.getId(),
+                                agendamento.getCliente().getNome(),
+                                agendamento.getRaia().getDescricao(),
+                                agendamento.getDataInicio(),
+                                agendamento.getDataFim(),
+                                agendamento.getStatus());
+        }
 }

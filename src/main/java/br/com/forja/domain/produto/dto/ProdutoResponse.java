@@ -4,25 +4,25 @@ import java.math.BigDecimal;
 
 public record ProdutoResponse(
 
-        Long id,
+                Long id,
 
-        String codigo,
+                String codigo,
 
-        String nome,
+                String nome,
 
-        String descricao,
+                String descricao,
 
-        Long categoriaId,
+                Long categoriaId,
 
-        String categoriaNome,
+                String categoriaNome,
 
-        Integer estoque,
+                Integer estoque,
 
-        BigDecimal valorCusto,
+                BigDecimal valorCusto,
 
-        BigDecimal valorVenda,
+                BigDecimal valorVenda,
 
-        Boolean ativo
+                Boolean ativo
 
 ) {
 }

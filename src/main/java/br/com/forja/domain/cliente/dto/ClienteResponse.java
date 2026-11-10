@@ -2,33 +2,33 @@ package br.com.forja.domain.cliente.dto;
 
 public record ClienteResponse(
 
-        Long id,
+                Long id,
 
-        String nome,
+                String nome,
 
-        String cpf,
+                String cpf,
 
-        String telefone,
+                String telefone,
 
-        String email,
+                String email,
 
-        String cr,
+                String cr,
 
-        Boolean ativo,
+                Boolean ativo,
 
-        String cep,
+                String cep,
 
-        String logradouro,
+                String logradouro,
 
-        String numero,
+                String numero,
 
-        String complemento,
+                String complemento,
 
-        String bairro,
+                String bairro,
 
-        String cidade,
+                String cidade,
 
-        String uf
+                String uf
 
 ) {
 }

@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 
 public record MetaFaturamentoResponse(
 
-        BigDecimal meta,
+                BigDecimal meta,
 
-        BigDecimal realizado,
+                BigDecimal realizado,
 
-        Double percentualAtingido
+                Double percentualAtingido
 
 ) {
 }

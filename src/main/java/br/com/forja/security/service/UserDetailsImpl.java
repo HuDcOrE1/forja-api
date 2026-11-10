@@ -13,8 +13,7 @@ public class UserDetailsImpl {
     }
 
     public static User build(
-            Usuario usuario
-    ) {
+            Usuario usuario) {
 
         return new User(
                 usuario.getEmail(),
@@ -25,7 +24,6 @@ public class UserDetailsImpl {
                         .map(Perfil::getNome)
                         .map(nome -> "ROLE_" + nome)
                         .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
     }
 }

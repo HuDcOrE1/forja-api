@@ -26,161 +26,132 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VendaService {
 
-    private final VendaRepository vendaRepository;
-    private final ItemVendaRepository itemVendaRepository;
-    private final ProdutoRepository produtoRepository;
-    private final ClienteRepository clienteRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final MovimentacaoEstoqueService movimentacaoEstoqueService;
+        private final VendaRepository vendaRepository;
+        private final ItemVendaRepository itemVendaRepository;
+        private final ProdutoRepository produtoRepository;
+        private final ClienteRepository clienteRepository;
+        private final UsuarioRepository usuarioRepository;
+        private final MovimentacaoEstoqueService movimentacaoEstoqueService;
 
-    public List<VendaResponse> listar() {
+        public List<VendaResponse> listar() {
 
-        return vendaRepository.findAllByOrderByCriadoEmDesc()
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
-
-    public VendaResponse buscarPorId(Long id) {
-
-        Venda venda =
-                vendaRepository.findById(id)
-                        .orElseThrow(
-                                () -> new VendaNaoEncontradaException(id)
-                        );
-
-        return toResponse(venda);
-    }
-
-    public VendaResponse salvar(
-            VendaRequest request
-    ) {
-
-        Cliente cliente =
-                request.clienteId() == null
-                        ? null
-                        : clienteRepository
-                                .findById(
-                                        request.clienteId()
-                                )
-                                .orElseThrow();
-
-        Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-
-        String email =
-                authentication.getName();
-
-        Usuario usuario =
-                usuarioRepository
-                        .findByEmail(email)
-                        .orElseThrow();
-
-        Venda venda =
-                Venda.builder()
-                        .cliente(cliente)
-                        .usuario(usuario)
-                        .formaPagamento(
-                                request.formaPagamento()
-                        )
-                        .status("FINALIZADA")
-                        .valorTotal(BigDecimal.ZERO)
-                        .build();
-   
-        venda = vendaRepository.save(venda);
-
-        BigDecimal valorTotal = BigDecimal.ZERO;
-
-        for (ItemVendaRequest itemRequest :
-                request.itens()) {
-
-            Produto produto =
-                    produtoRepository
-                            .findById(
-                                    itemRequest.produtoId()
-                            )
-                            .orElseThrow();
-
-            BigDecimal subtotal =
-                    produto.getValorVenda()
-                            .multiply(
-                                    BigDecimal.valueOf(
-                                            itemRequest.quantidade()
-                                    )
-                            );
-
-            ItemVenda item =
-                    ItemVenda.builder()
-                            .venda(venda)
-                            .produto(produto)
-                            .quantidade(
-                                    itemRequest.quantidade()
-                            )
-                            .valorUnitario(
-                                    produto.getValorVenda()
-                            )
-                            .subtotal(subtotal)
-                            .build();
-
-            itemVendaRepository.save(item);
-
-            valorTotal =
-                    valorTotal.add(subtotal);
-
-            movimentacaoEstoqueService.saida(
-                    new SaidaEstoqueRequest(
-                            produto.getId(),
-                            itemRequest.quantidade(),
-                            "Venda " + venda.getId()
-                    )
-            );
+                return vendaRepository.findAllByOrderByCriadoEmDesc()
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
         }
 
-        venda.setValorTotal(valorTotal);
+        public VendaResponse buscarPorId(Long id) {
 
-        venda = vendaRepository.save(venda);
+                Venda venda = vendaRepository.findById(id)
+                                .orElseThrow(
+                                                () -> new VendaNaoEncontradaException(id));
 
-        return toResponse(venda);
-    }
+                return toResponse(venda);
+        }
 
-    private VendaResponse toResponse(
-            Venda venda
-    ) {
+        public VendaResponse salvar(
+                        VendaRequest request) {
 
-        List<ItemVendaResponse> itens =
-                itemVendaRepository
-                        .findByVendaId(
-                                venda.getId()
-                        )
-                        .stream()
-                        .map(item ->
-                                new ItemVendaResponse(
-                                        item.getProduto().getId(),
-                                        item.getProduto().getNome(),
-                                        item.getQuantidade(),
-                                        item.getValorUnitario(),
-                                        item.getSubtotal()
-                                )
-                        )
-                        .toList();
+                Cliente cliente = request.clienteId() == null
+                                ? null
+                                : clienteRepository
+                                                .findById(
+                                                                request.clienteId())
+                                                .orElseThrow();
 
-        return new VendaResponse(
-                venda.getId(),
-                venda.getCliente() != null
-                        ? venda.getCliente().getId()
-                        : null,
-                venda.getCliente() != null
-                        ? venda.getCliente().getNome()
-                        : null,
-                venda.getUsuario().getId(),
-                venda.getUsuario().getNome(),
-                venda.getValorTotal(),
-                venda.getFormaPagamento(),
-                venda.getStatus(),
-                venda.getCriadoEm(),
-                itens
-        );
-    }
+                Authentication authentication = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication();
+
+                String email = authentication.getName();
+
+                Usuario usuario = usuarioRepository
+                                .findByEmail(email)
+                                .orElseThrow();
+
+                Venda venda = Venda.builder()
+                                .cliente(cliente)
+                                .usuario(usuario)
+                                .formaPagamento(
+                                                request.formaPagamento())
+                                .status("FINALIZADA")
+                                .valorTotal(BigDecimal.ZERO)
+                                .build();
+
+                venda = vendaRepository.save(venda);
+
+                BigDecimal valorTotal = BigDecimal.ZERO;
+
+                for (ItemVendaRequest itemRequest : request.itens()) {
+
+                        Produto produto = produtoRepository
+                                        .findById(
+                                                        itemRequest.produtoId())
+                                        .orElseThrow();
+
+                        BigDecimal subtotal = produto.getValorVenda()
+                                        .multiply(
+                                                        BigDecimal.valueOf(
+                                                                        itemRequest.quantidade()));
+
+                        ItemVenda item = ItemVenda.builder()
+                                        .venda(venda)
+                                        .produto(produto)
+                                        .quantidade(
+                                                        itemRequest.quantidade())
+                                        .valorUnitario(
+                                                        produto.getValorVenda())
+                                        .subtotal(subtotal)
+                                        .build();
+
+                        itemVendaRepository.save(item);
+
+                        valorTotal = valorTotal.add(subtotal);
+
+                        movimentacaoEstoqueService.saida(
+                                        new SaidaEstoqueRequest(
+                                                        produto.getId(),
+                                                        itemRequest.quantidade(),
+                                                        "Venda " + venda.getId()));
+                }
+
+                venda.setValorTotal(valorTotal);
+
+                venda = vendaRepository.save(venda);
+
+                return toResponse(venda);
+        }
+
+        private VendaResponse toResponse(
+                        Venda venda) {
+
+                List<ItemVendaResponse> itens = itemVendaRepository
+                                .findByVendaId(
+                                                venda.getId())
+                                .stream()
+                                .map(item -> new ItemVendaResponse(
+                                                item.getProduto().getId(),
+                                                item.getProduto().getNome(),
+                                                item.getQuantidade(),
+                                                item.getValorUnitario(),
+                                                item.getSubtotal()))
+                                .toList();
+
+                return new VendaResponse(
+                                venda.getId(),
+                                venda.getCliente() != null
+                                                ? venda.getCliente().getId()
+                                                : null,
+                                venda.getCliente() != null
+                                                ? venda.getCliente().getNome()
+                                                : null,
+                                venda.getUsuario().getId(),
+                                venda.getUsuario().getNome(),
+                                venda.getValorTotal(),
+                                venda.getFormaPagamento(),
+                                venda.getStatus(),
+                                venda.getCriadoEm(),
+                                itens);
+        }
 }

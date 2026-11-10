@@ -2,11 +2,11 @@ package br.com.forja.domain.relatorio.dto;
 
 public record RelatorioClienteResponse(
 
-        Long totalClientes,
+                Long totalClientes,
 
-        Long clientesAtivos,
+                Long clientesAtivos,
 
-        Long clientesInativos
+                Long clientesInativos
 
 ) {
 }

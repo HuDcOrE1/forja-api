@@ -1,16 +1,14 @@
 package br.com.forja.exception;
 
 public class ProdutoNaoEncontradoException
-        extends RuntimeException {
+                extends RuntimeException {
 
-    public ProdutoNaoEncontradoException(
-            Long id
-    ) {
+        public ProdutoNaoEncontradoException(
+                        Long id) {
 
-        super(
-                "Produto com id "
-                        + id
-                        + " não encontrado."
-        );
-    }
+                super(
+                                "Produto com id "
+                                                + id
+                                                + " não encontrado.");
+        }
 }

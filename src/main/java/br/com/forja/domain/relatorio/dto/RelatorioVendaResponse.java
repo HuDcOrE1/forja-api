@@ -5,19 +5,19 @@ import java.time.LocalDateTime;
 
 public record RelatorioVendaResponse(
 
-        Long vendaId,
+                Long vendaId,
 
-        String cliente,
+                String cliente,
 
-        String usuario,
+                String usuario,
 
-        BigDecimal valorTotal,
+                BigDecimal valorTotal,
 
-        String formaPagamento,
+                String formaPagamento,
 
-        String status,
+                String status,
 
-        LocalDateTime dataVenda
+                LocalDateTime dataVenda
 
 ) {
 }

@@ -1,16 +1,14 @@
 package br.com.forja.exception;
 
 public class VendaNaoEncontradaException
-        extends RuntimeException {
+                extends RuntimeException {
 
-    public VendaNaoEncontradaException(
-            Long id
-    ) {
+        public VendaNaoEncontradaException(
+                        Long id) {
 
-        super(
-                "Venda com id "
-                        + id
-                        + " não encontrada."
-        );
-    }
+                super(
+                                "Venda com id "
+                                                + id
+                                                + " não encontrada.");
+        }
 }

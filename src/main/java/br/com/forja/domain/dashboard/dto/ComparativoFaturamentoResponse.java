@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 
 public record ComparativoFaturamentoResponse(
 
-        BigDecimal faturamentoMesAtual,
+                BigDecimal faturamentoMesAtual,
 
-        BigDecimal faturamentoMesAnterior,
+                BigDecimal faturamentoMesAnterior,
 
-        BigDecimal diferenca,
+                BigDecimal diferenca,
 
-        Double crescimentoPercentual
+                Double crescimentoPercentual
 
 ) {
 }

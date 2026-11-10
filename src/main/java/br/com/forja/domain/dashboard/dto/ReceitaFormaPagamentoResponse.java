@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 public record ReceitaFormaPagamentoResponse(
 
-        String formaPagamento,
+                String formaPagamento,
 
-        BigDecimal valor
+                BigDecimal valor
 
 ) {
 }

@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 
 public record RelatorioVendaRequest(
 
-        Long clienteId,
+                Long clienteId,
 
-        String formaPagamento,
+                String formaPagamento,
 
-        String status,
+                String status,
 
-        LocalDateTime inicio,
+                LocalDateTime inicio,
 
-        LocalDateTime fim
+                LocalDateTime fim
 
 ) {
 }

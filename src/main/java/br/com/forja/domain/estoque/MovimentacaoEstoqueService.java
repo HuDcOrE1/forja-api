@@ -15,127 +15,100 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovimentacaoEstoqueService {
 
-    private final MovimentacaoEstoqueRepository repository;
-    private final ProdutoRepository produtoRepository;
+        private final MovimentacaoEstoqueRepository repository;
+        private final ProdutoRepository produtoRepository;
 
-    public MovimentacaoEstoqueResponse entrada(
-            EntradaEstoqueRequest request
-    ) {
+        public MovimentacaoEstoqueResponse entrada(
+                        EntradaEstoqueRequest request) {
 
-        Produto produto =
-                produtoRepository.findById(
-                        request.produtoId()
-                ).orElseThrow();
+                Produto produto = produtoRepository.findById(
+                                request.produtoId()).orElseThrow();
 
-        produto.setEstoque(
-                produto.getEstoque()
-                        + request.quantidade()
-        );
+                produto.setEstoque(
+                                produto.getEstoque()
+                                                + request.quantidade());
 
-        produtoRepository.save(produto);
+                produtoRepository.save(produto);
 
-        MovimentacaoEstoque movimentacao =
-                MovimentacaoEstoque.builder()
-                        .produto(produto)
-                        .tipo("ENTRADA")
-                        .quantidade(
-                                request.quantidade()
-                        )
-                        .observacao(
-                                request.observacao()
-                        )
-                        .criadoEm(
-                                LocalDateTime.now()
-                        )
-                        .build();
+                MovimentacaoEstoque movimentacao = MovimentacaoEstoque.builder()
+                                .produto(produto)
+                                .tipo("ENTRADA")
+                                .quantidade(
+                                                request.quantidade())
+                                .observacao(
+                                                request.observacao())
+                                .criadoEm(
+                                                LocalDateTime.now())
+                                .build();
 
-        movimentacao =
-                repository.save(movimentacao);
+                movimentacao = repository.save(movimentacao);
 
-        return toResponse(movimentacao);
-    }
-
-    public MovimentacaoEstoqueResponse saida(
-            SaidaEstoqueRequest request
-    ) {
-
-        Produto produto =
-                produtoRepository.findById(
-                        request.produtoId()
-                ).orElseThrow();
-
-        if (produto.getEstoque()
-                < request.quantidade()) {
-
-            throw new RuntimeException(
-                    "Estoque insuficiente."
-            );
+                return toResponse(movimentacao);
         }
 
-        produto.setEstoque(
-                produto.getEstoque()
-                        - request.quantidade()
-        );
+        public MovimentacaoEstoqueResponse saida(
+                        SaidaEstoqueRequest request) {
 
-        produtoRepository.save(produto);
+                Produto produto = produtoRepository.findById(
+                                request.produtoId()).orElseThrow();
 
-        MovimentacaoEstoque movimentacao =
-                MovimentacaoEstoque.builder()
-                        .produto(produto)
-                        .tipo("SAIDA")
-                        .quantidade(
-                                request.quantidade()
-                        )
-                        .observacao(
-                                request.observacao()
-                        )
-                        .criadoEm(
-                                LocalDateTime.now()
-                        )
-                        .build();
+                if (produto.getEstoque() < request.quantidade()) {
 
-        movimentacao =
-                repository.save(movimentacao);
+                        throw new RuntimeException(
+                                        "Estoque insuficiente.");
+                }
 
-        return toResponse(movimentacao);
-    }
+                produto.setEstoque(
+                                produto.getEstoque()
+                                                - request.quantidade());
 
-    public List<MovimentacaoEstoqueResponse>
-    historico() {
+                produtoRepository.save(produto);
 
-        return repository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+                MovimentacaoEstoque movimentacao = MovimentacaoEstoque.builder()
+                                .produto(produto)
+                                .tipo("SAIDA")
+                                .quantidade(
+                                                request.quantidade())
+                                .observacao(
+                                                request.observacao())
+                                .criadoEm(
+                                                LocalDateTime.now())
+                                .build();
 
-    public List<MovimentacaoEstoqueResponse>
-    historicoProduto(
-            Long produtoId
-    ) {
+                movimentacao = repository.save(movimentacao);
 
-        return repository
-                .findByProdutoIdOrderByCriadoEmDesc(
-                        produtoId
-                )
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+                return toResponse(movimentacao);
+        }
 
-    private MovimentacaoEstoqueResponse
-    toResponse(
-            MovimentacaoEstoque movimentacao
-    ) {
+        public List<MovimentacaoEstoqueResponse> historico() {
 
-        return new MovimentacaoEstoqueResponse(
-                movimentacao.getId(),
-                movimentacao.getProduto().getId(),
-                movimentacao.getProduto().getNome(),
-                movimentacao.getTipo(),
-                movimentacao.getQuantidade(),
-                movimentacao.getObservacao(),
-                movimentacao.getCriadoEm()
-        );
-    }
+                return repository.findAll()
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
+        }
+
+        public List<MovimentacaoEstoqueResponse> historicoProduto(
+                        Long produtoId) {
+
+                return repository
+                                .findByProdutoIdOrderByCriadoEmDesc(
+                                                produtoId)
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
+        }
+
+        private MovimentacaoEstoqueResponse toResponse(
+                        MovimentacaoEstoque movimentacao) {
+
+                return new MovimentacaoEstoqueResponse(
+                                movimentacao.getId(),
+                                movimentacao.getProduto().getId(),
+                                movimentacao.getProduto().getNome(),
+                                movimentacao.getTipo(),
+                                movimentacao.getQuantidade(),
+                                movimentacao.getObservacao(),
+                                movimentacao.getCriadoEm());
+        }
 }

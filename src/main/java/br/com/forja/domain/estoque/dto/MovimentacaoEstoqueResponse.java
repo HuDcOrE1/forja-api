@@ -4,19 +4,19 @@ import java.time.LocalDateTime;
 
 public record MovimentacaoEstoqueResponse(
 
-        Long id,
+                Long id,
 
-        Long produtoId,
+                Long produtoId,
 
-        String produto,
+                String produto,
 
-        String tipo,
+                String tipo,
 
-        Integer quantidade,
+                Integer quantidade,
 
-        String observacao,
+                String observacao,
 
-        LocalDateTime criadoEm
+                LocalDateTime criadoEm
 
 ) {
 }

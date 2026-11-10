@@ -6,13 +6,11 @@ public class ConflitoAgendamentoException
     public ConflitoAgendamentoException() {
 
         super(
-                "Já existe agendamento para esta raia no período informado."
-        );
+                "Já existe agendamento para esta raia no período informado.");
     }
 
     public ConflitoAgendamentoException(
-            String mensagem
-    ) {
+            String mensagem) {
 
         super(mensagem);
     }

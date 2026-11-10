@@ -2,9 +2,9 @@ package br.com.forja.domain.dashboard.dto;
 
 public record RankingClienteResponse(
 
-        String cliente,
+                String cliente,
 
-        Long quantidadeCompras
+                Long quantidadeCompras
 
 ) {
 }

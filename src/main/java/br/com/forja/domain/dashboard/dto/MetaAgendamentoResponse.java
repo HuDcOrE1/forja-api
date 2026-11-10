@@ -2,11 +2,11 @@ package br.com.forja.domain.dashboard.dto;
 
 public record MetaAgendamentoResponse(
 
-        Long meta,
+                Long meta,
 
-        Long realizado,
+                Long realizado,
 
-        Double percentualAtingido
+                Double percentualAtingido
 
 ) {
 }

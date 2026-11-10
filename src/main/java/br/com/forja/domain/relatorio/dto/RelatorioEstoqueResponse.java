@@ -4,17 +4,17 @@ import java.math.BigDecimal;
 
 public record RelatorioEstoqueResponse(
 
-        Long produtoId,
+                Long produtoId,
 
-        String codigo,
+                String codigo,
 
-        String produto,
+                String produto,
 
-        Integer estoque,
+                Integer estoque,
 
-        BigDecimal valorVenda,
+                BigDecimal valorVenda,
 
-        BigDecimal valorTotalEstoque
+                BigDecimal valorTotalEstoque
 
 ) {
 }

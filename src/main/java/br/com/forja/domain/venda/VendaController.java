@@ -14,37 +14,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VendaController {
 
-    private final VendaService service;
+        private final VendaService service;
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @GetMapping
-    public List<VendaResponse> listar() {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @GetMapping
+        public List<VendaResponse> listar() {
 
-        return service.listar();
-    }
+                return service.listar();
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @GetMapping("/{id}")
-    public VendaResponse buscarPorId(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @GetMapping("/{id}")
+        public VendaResponse buscarPorId(
+                        @PathVariable Long id) {
 
-        return service.buscarPorId(id);
-    }
+                return service.buscarPorId(id);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @PostMapping
-    public VendaResponse salvar(
-            @Valid
-            @RequestBody VendaRequest request
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @PostMapping
+        public VendaResponse salvar(
+                        @Valid @RequestBody VendaRequest request) {
 
-        return service.salvar(request);
-    }
+                return service.salvar(request);
+        }
 }

@@ -19,73 +19,58 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter
-        extends OncePerRequestFilter {
+                extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+        private final JwtService jwtService;
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+        @Override
+        protected void doFilterInternal(
+                        HttpServletRequest request,
+                        HttpServletResponse response,
+                        FilterChain filterChain) throws ServletException, IOException {
 
-        String header =
-                request.getHeader(
-                        "Authorization"
-                );
+                String header = request.getHeader(
+                                "Authorization");
 
-        if (header != null &&
-                header.startsWith(
-                        "Bearer "
-                )) {
+                if (header != null &&
+                                header.startsWith(
+                                                "Bearer ")) {
 
-            String token =
-                    header.substring(7);
+                        String token = header.substring(7);
 
-            if (jwtService.tokenValido(token)) {
+                        if (jwtService.tokenValido(token)) {
 
-                String email =
-                        jwtService.extrairEmail(
-                                token
-                        );
+                                String email = jwtService.extrairEmail(
+                                                token);
 
-                List<SimpleGrantedAuthority>
-                        authorities =
+                                List<SimpleGrantedAuthority> authorities =
 
-                        jwtService
-                                .extrairRoles(token)
-                                .stream()
-                                .map(
-                                        SimpleGrantedAuthority::new
-                                )
-                                .toList();
+                                                jwtService
+                                                                .extrairRoles(token)
+                                                                .stream()
+                                                                .map(
+                                                                                SimpleGrantedAuthority::new)
+                                                                .toList();
 
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                email,
-                                null,
-                                authorities
-                        );
+                                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                                                email,
+                                                null,
+                                                authorities);
 
-                auth.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(
-                                        request
-                                )
-                );
+                                auth.setDetails(
+                                                new WebAuthenticationDetailsSource()
+                                                                .buildDetails(
+                                                                                request));
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(
-                                auth
-                        );
-            }
+                                SecurityContextHolder
+                                                .getContext()
+                                                .setAuthentication(
+                                                                auth);
+                        }
+                }
+
+                filterChain.doFilter(
+                                request,
+                                response);
         }
-
-        filterChain.doFilter(
-                request,
-                response
-        );
-    }
 }

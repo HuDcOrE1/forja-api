@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 public record FaturamentoMensalResponse(
 
-        String mes,
+                String mes,
 
-        BigDecimal valor
+                BigDecimal valor
 
 ) {
 }

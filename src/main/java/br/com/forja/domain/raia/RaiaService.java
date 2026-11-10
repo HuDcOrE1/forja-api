@@ -13,94 +13,79 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RaiaService {
 
-    private final RaiaRepository repository;
+        private final RaiaRepository repository;
 
-    public List<RaiaResponse> listar() {
+        public List<RaiaResponse> listar() {
 
-        return repository.findByAtivaTrue()
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+                return repository.findByAtivaTrue()
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
+        }
 
-    public RaiaResponse buscarPorId(
-            Long id
-    ) {
+        public RaiaResponse buscarPorId(
+                        Long id) {
 
-        Raia raia =
-                repository.findById(id)
-                        .orElseThrow(
-                                () -> new RaiaNaoEncontradaException(id)
-                        );
+                Raia raia = repository.findById(id)
+                                .orElseThrow(
+                                                () -> new RaiaNaoEncontradaException(id));
 
-        return toResponse(raia);
-    }
+                return toResponse(raia);
+        }
 
-    public RaiaResponse salvar(
-            RaiaRequest request
-    ) {
+        public RaiaResponse salvar(
+                        RaiaRequest request) {
 
-        Raia raia =
-                Raia.builder()
-                        .numero(request.numero())
-                        .descricao(request.descricao())
-                        .ativa(true)
-                        .criadoEm(LocalDateTime.now())
-                        .build();
+                Raia raia = Raia.builder()
+                                .numero(request.numero())
+                                .descricao(request.descricao())
+                                .ativa(true)
+                                .criadoEm(LocalDateTime.now())
+                                .build();
 
-        raia = repository.save(raia);
+                raia = repository.save(raia);
 
-        return toResponse(raia);
-    }
+                return toResponse(raia);
+        }
 
-    public RaiaResponse atualizar(
-            Long id,
-            RaiaRequest request
-    ) {
+        public RaiaResponse atualizar(
+                        Long id,
+                        RaiaRequest request) {
 
-        Raia raia =
-                repository.findById(id)
-                        .orElseThrow(
-                                () -> new RaiaNaoEncontradaException(id)
-                        );
+                Raia raia = repository.findById(id)
+                                .orElseThrow(
+                                                () -> new RaiaNaoEncontradaException(id));
 
-        raia.setNumero(
-                request.numero()
-        );
+                raia.setNumero(
+                                request.numero());
 
-        raia.setDescricao(
-                request.descricao()
-        );
+                raia.setDescricao(
+                                request.descricao());
 
-        raia = repository.save(raia);
+                raia = repository.save(raia);
 
-        return toResponse(raia);
-    }
+                return toResponse(raia);
+        }
 
-    public void excluir(
-            Long id
-    ) {
+        public void excluir(
+                        Long id) {
 
-        Raia raia =
-                repository.findById(id)
-                        .orElseThrow(
-                                () -> new RaiaNaoEncontradaException(id)
-                        );
+                Raia raia = repository.findById(id)
+                                .orElseThrow(
+                                                () -> new RaiaNaoEncontradaException(id));
 
-        raia.setAtiva(false);
+                raia.setAtiva(false);
 
-        repository.save(raia);
-    }
+                repository.save(raia);
+        }
 
-    private RaiaResponse toResponse(
-            Raia raia
-    ) {
+        private RaiaResponse toResponse(
+                        Raia raia) {
 
-        return new RaiaResponse(
-                raia.getId(),
-                raia.getNumero(),
-                raia.getDescricao(),
-                raia.getAtiva()
-        );
-    }
+                return new RaiaResponse(
+                                raia.getId(),
+                                raia.getNumero(),
+                                raia.getDescricao(),
+                                raia.getAtiva());
+        }
 }

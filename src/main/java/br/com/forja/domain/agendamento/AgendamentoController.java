@@ -14,72 +14,53 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AgendamentoController {
 
-    private final AgendamentoService service;
+        private final AgendamentoService service;
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')"
-    )
-    @GetMapping
-    public List<AgendamentoResponse> listar() {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")
+        @GetMapping
+        public List<AgendamentoResponse> listar() {
 
-        return service.listar();
-    }
+                return service.listar();
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')"
-    )
-    @GetMapping("/{id}")
-    public AgendamentoResponse buscarPorId(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")
+        @GetMapping("/{id}")
+        public AgendamentoResponse buscarPorId(
+                        @PathVariable Long id) {
 
-        return service.buscarPorId(id);
-    }
+                return service.buscarPorId(id);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @PostMapping
-    public AgendamentoResponse salvar(
-            @Valid
-            @RequestBody AgendamentoRequest request
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @PostMapping
+        public AgendamentoResponse salvar(
+                        @Valid @RequestBody AgendamentoRequest request) {
 
-        return service.salvar(request);
-    }
+                return service.salvar(request);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @PutMapping("/{id}")
-    public AgendamentoResponse atualizar(
-            @PathVariable Long id,
-            @Valid
-            @RequestBody AgendamentoRequest request
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @PutMapping("/{id}")
+        public AgendamentoResponse atualizar(
+                        @PathVariable Long id,
+                        @Valid @RequestBody AgendamentoRequest request) {
 
-        return service.atualizar(id, request);
-    }
+                return service.atualizar(id, request);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @PutMapping("/{id}/cancelar")
-    public void cancelar(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @PutMapping("/{id}/cancelar")
+        public void cancelar(
+                        @PathVariable Long id) {
 
-        service.cancelar(id);
-    }
+                service.cancelar(id);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','INSTRUTOR')"
-    )
-    @PutMapping("/{id}/finalizar")
-    public void finalizar(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','INSTRUTOR')")
+        @PutMapping("/{id}/finalizar")
+        public void finalizar(
+                        @PathVariable Long id) {
 
-        service.finalizar(id);
-    }
+                service.finalizar(id);
+        }
 }

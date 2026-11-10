@@ -9,30 +9,26 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsConfig {
 
-    @Bean
-    public CorsFilter corsFilter() {
+        @Bean
+        public CorsFilter corsFilter() {
 
-        CorsConfiguration config =
-                new CorsConfiguration();
+                CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowCredentials(true);
+                config.setAllowCredentials(true);
 
-        config.addAllowedOrigin(
-                "http://localhost:4200"
-        );
+                config.addAllowedOrigin(
+                                "http://localhost:4200");
 
-        config.addAllowedHeader("*");
+                config.addAllowedHeader("*");
 
-        config.addAllowedMethod("*");
+                config.addAllowedMethod("*");
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration(
-                "/**",
-                config
-        );
+                source.registerCorsConfiguration(
+                                "/**",
+                                config);
 
-        return new CorsFilter(source);
-    }
+                return new CorsFilter(source);
+        }
 }

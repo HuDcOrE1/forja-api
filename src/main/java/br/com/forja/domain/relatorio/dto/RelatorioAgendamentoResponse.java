@@ -4,17 +4,17 @@ import java.time.LocalDateTime;
 
 public record RelatorioAgendamentoResponse(
 
-        Long id,
+                Long id,
 
-        String cliente,
+                String cliente,
 
-        String raia,
+                String raia,
 
-        LocalDateTime inicio,
+                LocalDateTime inicio,
 
-        LocalDateTime fim,
+                LocalDateTime fim,
 
-        String status
+                String status
 
 ) {
 }

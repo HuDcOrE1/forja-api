@@ -8,14 +8,11 @@ import java.util.List;
 
 public record VendaRequest(
 
-        @NotNull (message = "Cliente é obrigatório")
-        Long clienteId,
+                @NotNull(message = "Cliente é obrigatório") Long clienteId,
 
-        @NotBlank(message = "Forma de pagamento é obrigatória")
-        String formaPagamento,
+                @NotBlank(message = "Forma de pagamento é obrigatória") String formaPagamento,
 
-        @NotEmpty(message = "A venda deve possuir pelo menos um item")
-        List<ItemVendaRequest> itens
+                @NotEmpty(message = "A venda deve possuir pelo menos um item") List<ItemVendaRequest> itens
 
 ) {
 }

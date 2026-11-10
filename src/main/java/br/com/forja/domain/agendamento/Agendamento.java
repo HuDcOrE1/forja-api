@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Agendamento  extends Auditavel{
+public class Agendamento extends Auditavel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

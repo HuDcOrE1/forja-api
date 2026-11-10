@@ -27,8 +27,7 @@ public class ClienteController {
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
     @GetMapping("/{id}")
     public ClienteResponse buscarPorId(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id) {
 
         return service.buscarPorId(id);
     }
@@ -36,19 +35,16 @@ public class ClienteController {
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
     @PostMapping
     public ClienteResponse salvar(
-            @Valid
-            @RequestBody ClienteRequest request
-    ) {
+            @Valid @RequestBody ClienteRequest request) {
 
         return service.salvar(request);
     }
-    @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")   
+
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
     @PutMapping("/{id}")
     public ClienteResponse atualizar(
             @PathVariable Long id,
-            @Valid
-            @RequestBody ClienteRequest request
-    ) {
+            @Valid @RequestBody ClienteRequest request) {
 
         return service.atualizar(id, request);
     }
@@ -56,8 +52,7 @@ public class ClienteController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id) {
 
         service.excluir(id);
 

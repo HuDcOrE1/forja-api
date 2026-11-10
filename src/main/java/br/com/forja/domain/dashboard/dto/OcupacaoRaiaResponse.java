@@ -2,9 +2,9 @@ package br.com.forja.domain.dashboard.dto;
 
 public record OcupacaoRaiaResponse(
 
-        String raia,
+                String raia,
 
-        Long quantidadeAgendamentos
+                Long quantidadeAgendamentos
 
 ) {
 }

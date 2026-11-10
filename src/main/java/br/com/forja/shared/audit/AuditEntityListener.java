@@ -11,44 +11,37 @@ public class AuditEntityListener {
 
     @PrePersist
     public void prePersist(
-            Object entity
-    ) {
+            Object entity) {
 
         if (entity instanceof Auditavel auditavel) {
 
             auditavel.setCriadoEm(
-                    LocalDateTime.now()
-            );
+                    LocalDateTime.now());
 
             auditavel.setCriadoPor(
-                    usuarioLogado()
-            );
+                    usuarioLogado());
         }
     }
 
     @PreUpdate
     public void preUpdate(
-            Object entity
-    ) {
+            Object entity) {
 
         if (entity instanceof Auditavel auditavel) {
 
             auditavel.setAlteradoEm(
-                    LocalDateTime.now()
-            );
+                    LocalDateTime.now());
 
             auditavel.setAlteradoPor(
-                    usuarioLogado()
-            );
+                    usuarioLogado());
         }
     }
 
     private String usuarioLogado() {
 
-        Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
 
         if (authentication == null) {
             return "SYSTEM";

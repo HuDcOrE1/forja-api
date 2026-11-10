@@ -2,11 +2,11 @@ package br.com.forja.domain.relatorio.dto;
 
 public record RelatorioEstoqueRequest(
 
-        Long categoriaId,
+                Long categoriaId,
 
-        Integer estoqueMinimo,
+                Integer estoqueMinimo,
 
-        Boolean somenteAtivos
+                Boolean somenteAtivos
 
 ) {
 }

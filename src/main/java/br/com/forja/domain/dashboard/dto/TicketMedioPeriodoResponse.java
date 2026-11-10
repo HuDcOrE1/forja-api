@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 public record TicketMedioPeriodoResponse(
 
-        String periodo,
+                String periodo,
 
-        BigDecimal ticketMedio
+                BigDecimal ticketMedio
 
 ) {
 }

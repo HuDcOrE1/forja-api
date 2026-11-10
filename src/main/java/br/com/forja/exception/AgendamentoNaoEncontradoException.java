@@ -1,16 +1,14 @@
 package br.com.forja.exception;
 
 public class AgendamentoNaoEncontradoException
-        extends RuntimeException {
+                extends RuntimeException {
 
-    public AgendamentoNaoEncontradoException(
-            Long id
-    ) {
+        public AgendamentoNaoEncontradoException(
+                        Long id) {
 
-        super(
-                "Agendamento com id "
-                        + id
-                        + " não encontrado."
-        );
-    }
+                super(
+                                "Agendamento com id "
+                                                + id
+                                                + " não encontrado.");
+        }
 }

@@ -1,16 +1,14 @@
 package br.com.forja.exception;
 
 public class RaiaNaoEncontradaException
-        extends RuntimeException {
+                extends RuntimeException {
 
-    public RaiaNaoEncontradaException(
-            Long id
-    ) {
+        public RaiaNaoEncontradaException(
+                        Long id) {
 
-        super(
-                "Raia com id "
-                        + id
-                        + " não encontrada."
-        );
-    }
+                super(
+                                "Raia com id "
+                                                + id
+                                                + " não encontrada.");
+        }
 }

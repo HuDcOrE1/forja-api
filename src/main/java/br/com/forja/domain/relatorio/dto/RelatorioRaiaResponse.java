@@ -2,11 +2,11 @@ package br.com.forja.domain.relatorio.dto;
 
 public record RelatorioRaiaResponse(
 
-        Long raiaId,
+                Long raiaId,
 
-        String raia,
+                String raia,
 
-        Long quantidadeAgendamentos
+                Long quantidadeAgendamentos
 
 ) {
 }

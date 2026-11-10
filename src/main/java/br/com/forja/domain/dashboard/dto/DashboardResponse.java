@@ -4,37 +4,37 @@ import java.math.BigDecimal;
 
 public record DashboardResponse(
 
-        Long clientesAtivos,
+                Long clientesAtivos,
 
-        Long produtosAtivos,
+                Long produtosAtivos,
 
-        Long totalVendas,
+                Long totalVendas,
 
-        BigDecimal valorTotalVendas,
+                BigDecimal valorTotalVendas,
 
-        BigDecimal ticketMedio,
+                BigDecimal ticketMedio,
 
-        String produtoMaisVendido,
+                String produtoMaisVendido,
 
-        Long quantidadeProdutoMaisVendido,
+                Long quantidadeProdutoMaisVendido,
 
-        String clienteMaisComprador,
+                String clienteMaisComprador,
 
-        Long quantidadeComprasCliente,
+                Long quantidadeComprasCliente,
 
-        BigDecimal receitaHoje,
+                BigDecimal receitaHoje,
 
-        BigDecimal receitaMes,
+                BigDecimal receitaMes,
 
-        Long agendamentosAtivos,
+                Long agendamentosAtivos,
 
-        String raiaMaisUtilizada,
+                String raiaMaisUtilizada,
 
-        Long quantidadeAgendamentosRaia,
+                Long quantidadeAgendamentosRaia,
 
-        Long raiasAtivas,
+                Long raiasAtivas,
 
-        BigDecimal valorTotalEstoque
+                BigDecimal valorTotalEstoque
 
 ) {
 }

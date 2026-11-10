@@ -6,14 +6,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AgendamentoRepository
-        extends JpaRepository<Agendamento, Long> {
+                extends JpaRepository<Agendamento, Long> {
 
-    List<Agendamento> findByRaiaId(
-            Long raiaId
-    );
+        List<Agendamento> findByRaiaId(
+                        Long raiaId);
 
-    List<Agendamento> findByDataInicioBetween(
-            LocalDateTime inicio,
-            LocalDateTime fim
-    );
+        List<Agendamento> findByDataInicioBetween(
+                        LocalDateTime inicio,
+                        LocalDateTime fim);
 }

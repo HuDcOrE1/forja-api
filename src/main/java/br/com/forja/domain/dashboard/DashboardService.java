@@ -26,805 +26,573 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DashboardService {
 
-    private final ClienteRepository clienteRepository;
-    private final ProdutoRepository produtoRepository;
-    private final VendaRepository vendaRepository;
-    private final ItemVendaRepository itemVendaRepository;
-    private final AgendamentoRepository agendamentoRepository;
-    private final RaiaRepository raiaRepository;
+        private final ClienteRepository clienteRepository;
+        private final ProdutoRepository produtoRepository;
+        private final VendaRepository vendaRepository;
+        private final ItemVendaRepository itemVendaRepository;
+        private final AgendamentoRepository agendamentoRepository;
+        private final RaiaRepository raiaRepository;
 
-    public DashboardResponse dashboard() {
+        public DashboardResponse dashboard() {
 
-        long clientesAtivos =
-                clienteRepository.findByAtivoTrue()
-                        .size();
+                long clientesAtivos = clienteRepository.findByAtivoTrue()
+                                .size();
 
-        long produtosAtivos =
-                produtoRepository.findByAtivoTrue()
-                        .size();
+                long produtosAtivos = produtoRepository.findByAtivoTrue()
+                                .size();
 
-        List<Venda> vendas =
-                vendaRepository.findAll();
+                List<Venda> vendas = vendaRepository.findAll();
 
-        long totalVendas =
-                vendas.size();
+                long totalVendas = vendas.size();
 
-        BigDecimal valorTotalVendas =
-                vendas.stream()
-                        .map(v ->
-                                v.getValorTotal() == null
-                                        ? BigDecimal.ZERO
-                                        : v.getValorTotal()
-                        )
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
+                BigDecimal valorTotalVendas = vendas.stream()
+                                .map(v -> v.getValorTotal() == null
+                                                ? BigDecimal.ZERO
+                                                : v.getValorTotal())
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
 
-        BigDecimal ticketMedio =
-                totalVendas == 0
-                        ? BigDecimal.ZERO
-                        : valorTotalVendas.divide(
-                                BigDecimal.valueOf(totalVendas),
-                                2,
-                                RoundingMode.HALF_UP
-                        );
+                BigDecimal ticketMedio = totalVendas == 0
+                                ? BigDecimal.ZERO
+                                : valorTotalVendas.divide(
+                                                BigDecimal.valueOf(totalVendas),
+                                                2,
+                                                RoundingMode.HALF_UP);
 
-        List<ItemVenda> itens =
-                itemVendaRepository.findAll();
+                List<ItemVenda> itens = itemVendaRepository.findAll();
 
-        Map<String, Long> produtosVendidos =
-                itens.stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        item ->
-                                                item.getProduto()
-                                                        .getNome(),
-                                        Collectors.summingLong(
-                                                ItemVenda::getQuantidade
-                                        )
-                                )
-                        );
+                Map<String, Long> produtosVendidos = itens.stream()
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                item -> item.getProduto()
+                                                                                .getNome(),
+                                                                Collectors.summingLong(
+                                                                                ItemVenda::getQuantidade)));
 
-        String produtoMaisVendido =
-                produtosVendidos.entrySet()
-                        .stream()
-                        .max(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getKey)
-                        .orElse("N/A");
+                String produtoMaisVendido = produtosVendidos.entrySet()
+                                .stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getKey)
+                                .orElse("N/A");
 
-        Long quantidadeProdutoMaisVendido =
-                produtosVendidos.entrySet()
-                        .stream()
-                        .max(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getValue)
-                        .orElse(0L);
+                Long quantidadeProdutoMaisVendido = produtosVendidos.entrySet()
+                                .stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getValue)
+                                .orElse(0L);
 
-        Map<String, Long> clientesCompradores =
-                vendas.stream()
-                        .filter(v -> v.getCliente() != null)
-                        .collect(
-                                Collectors.groupingBy(
-                                        v -> v.getCliente().getNome(),
-                                        Collectors.counting()
-                                )
-                        );
+                Map<String, Long> clientesCompradores = vendas.stream()
+                                .filter(v -> v.getCliente() != null)
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                v -> v.getCliente().getNome(),
+                                                                Collectors.counting()));
 
-        String clienteMaisComprador =
-                clientesCompradores.entrySet()
-                        .stream()
-                        .max(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getKey)
-                        .orElse("N/A");
+                String clienteMaisComprador = clientesCompradores.entrySet()
+                                .stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getKey)
+                                .orElse("N/A");
 
-        Long quantidadeComprasCliente =
-                clientesCompradores.entrySet()
-                        .stream()
-                        .max(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getValue)
-                        .orElse(0L);
+                Long quantidadeComprasCliente = clientesCompradores.entrySet()
+                                .stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getValue)
+                                .orElse(0L);
 
-        LocalDate hoje =
-                LocalDate.now();
+                LocalDate hoje = LocalDate.now();
 
-        BigDecimal receitaHoje =
-                vendas.stream()
-                        .filter(v ->
-                                v.getCriadoEm() != null
-                                        &&
-                                        v.getCriadoEm()
-                                                .toLocalDate()
-                                                .equals(hoje)
-                        )
-                        .map(Venda::getValorTotal)
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
-
-        YearMonth mesAtual =
-                YearMonth.now();
-
-        BigDecimal receitaMes =
-                vendas.stream()
-                        .filter(v ->
-                                v.getCriadoEm() != null
-                                        &&
-                                        YearMonth.from(
+                BigDecimal receitaHoje = vendas.stream()
+                                .filter(v -> v.getCriadoEm() != null
+                                                &&
                                                 v.getCriadoEm()
-                                        ).equals(mesAtual)
-                        )
-                        .map(Venda::getValorTotal)
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
-
-        List<Agendamento> agendamentos =
-                agendamentoRepository.findAll();
-
-        long agendamentosAtivos =
-                agendamentos.stream()
-                        .filter(a ->
-                                !"CANCELADO".equals(
-                                        a.getStatus()
-                                )
-                        )
-                        .count();
-
-        Map<String, Long> utilizacaoRaias =
-                agendamentos.stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        a ->
-                                                a.getRaia()
-                                                        .getDescricao(),
-                                        Collectors.counting()
-                                )
-                        );
-
-        String raiaMaisUtilizada =
-                utilizacaoRaias.entrySet()
-                        .stream()
-                        .max(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getKey)
-                        .orElse("N/A");
-
-        Long quantidadeAgendamentosRaia =
-                utilizacaoRaias.entrySet()
-                        .stream()
-                        .max(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getValue)
-                        .orElse(0L);
-
-        long raiasAtivas =
-                raiaRepository.findByAtivaTrue()
-                        .size();
-
-        BigDecimal valorTotalEstoque =
-                produtoRepository.findByAtivoTrue()
-                        .stream()
-                        .map(this::valorEstoqueProduto)
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
-
-        return new DashboardResponse(
-                clientesAtivos,
-                produtosAtivos,
-                totalVendas,
-                valorTotalVendas,
-                ticketMedio,
-                produtoMaisVendido,
-                quantidadeProdutoMaisVendido,
-                clienteMaisComprador,
-                quantidadeComprasCliente,
-                receitaHoje,
-                receitaMes,
-                agendamentosAtivos,
-                raiaMaisUtilizada,
-                quantidadeAgendamentosRaia,
-                raiasAtivas,
-                valorTotalEstoque
-        );
-    }
-
-    public List<FaturamentoDiarioResponse> faturamentoDiario(
-            LocalDate inicio,
-            LocalDate fim
-    ) {
-
-        LocalDate dataInicial =
-                inicio == null
-                        ? LocalDate.now().minusDays(30)
-                        : inicio;
-
-        LocalDate dataFinal =
-                fim == null
-                        ? LocalDate.now()
-                        : fim;
-
-        return vendaRepository.findAll()
-                .stream()
-                .filter(v ->
-                        v.getCriadoEm() != null
-                )
-                .filter(v ->
-                        !v.getCriadoEm().toLocalDate().isBefore(dataInicial)
-                )
-                .filter(v ->
-                        !v.getCriadoEm().toLocalDate().isAfter(dataFinal)
-                )
-                .collect(
-                        Collectors.groupingBy(
-                                venda ->
-                                        venda.getCriadoEm().toLocalDate(),
-                                Collectors.mapping(
-                                        Venda::getValorTotal,
-                                        Collectors.reducing(
+                                                                .toLocalDate()
+                                                                .equals(hoje))
+                                .map(Venda::getValorTotal)
+                                .reduce(
                                                 BigDecimal.ZERO,
-                                                BigDecimal::add
-                                        )
-                                )
-                        )
-                )
-                .entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(entry ->
-                        new FaturamentoDiarioResponse(
-                                entry.getKey(),
-                                entry.getValue()
-                        )
-                )
-                .toList();
-    }
+                                                BigDecimal::add);
 
-    public List<FaturamentoMensalResponse> faturamentoMensal(
-            LocalDate inicio,
-            LocalDate fim
-    ) {
+                YearMonth mesAtual = YearMonth.now();
 
-        LocalDate dataInicial =
-                inicio == null
-                        ? LocalDate.now().minusMonths(12)
-                        : inicio;
-
-        LocalDate dataFinal =
-                fim == null
-                        ? LocalDate.now()
-                        : fim;
-
-        return vendaRepository.findAll()
-                .stream()
-                .filter(v ->
-                        v.getCriadoEm() != null
-                )
-                .filter(v ->
-                        !v.getCriadoEm().toLocalDate().isBefore(dataInicial)
-                )
-                .filter(v ->
-                        !v.getCriadoEm().toLocalDate().isAfter(dataFinal)
-                )
-                .collect(
-                        Collectors.groupingBy(
-                                venda ->
-                                        YearMonth.from(venda.getCriadoEm()),
-                                Collectors.mapping(
-                                        Venda::getValorTotal,
-                                        Collectors.reducing(
+                BigDecimal receitaMes = vendas.stream()
+                                .filter(v -> v.getCriadoEm() != null
+                                                &&
+                                                YearMonth.from(
+                                                                v.getCriadoEm()).equals(mesAtual))
+                                .map(Venda::getValorTotal)
+                                .reduce(
                                                 BigDecimal.ZERO,
-                                                BigDecimal::add
-                                        )
-                                )
-                        )
-                )
-                .entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(entry ->
-                        new FaturamentoMensalResponse(
-                                entry.getKey().toString(),
-                                entry.getValue()
-                        )
-                )
-                .toList();
-    }
+                                                BigDecimal::add);
 
-    private BigDecimal valorEstoqueProduto(
-            Produto produto
-    ) {
+                List<Agendamento> agendamentos = agendamentoRepository.findAll();
 
-        return produto.getValorVenda()
-                .multiply(
-                        BigDecimal.valueOf(
-                                produto.getEstoque()
-                        )
-                );
-    }
+                long agendamentosAtivos = agendamentos.stream()
+                                .filter(a -> !"CANCELADO".equals(
+                                                a.getStatus()))
+                                .count();
 
-    public List<RankingProdutoResponse> topProdutos() {
+                Map<String, Long> utilizacaoRaias = agendamentos.stream()
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                a -> a.getRaia()
+                                                                                .getDescricao(),
+                                                                Collectors.counting()));
 
-        return itemVendaRepository.findAll()
-                .stream()
-                .collect(
-                        Collectors.groupingBy(
-                                item ->
-                                        item.getProduto()
-                                                .getNome(),
-                                Collectors.summingLong(
-                                        ItemVenda::getQuantidade
-                                )
-                        )
-                )
-                .entrySet()
-                .stream()
-                .sorted(
-                        Map.Entry.<String, Long>
-                                comparingByValue()
-                                .reversed()
-                )
-                .limit(10)
-                .map(entry ->
-                        new RankingProdutoResponse(
-                                entry.getKey(),
-                                entry.getValue()
-                        )
-                )
-                .toList();
-    }
+                String raiaMaisUtilizada = utilizacaoRaias.entrySet()
+                                .stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getKey)
+                                .orElse("N/A");
 
-    public List<RankingClienteResponse> topClientes() {
+                Long quantidadeAgendamentosRaia = utilizacaoRaias.entrySet()
+                                .stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getValue)
+                                .orElse(0L);
 
-        return vendaRepository.findAll()
-                .stream()
-                .filter(
-                        venda ->
-                                venda.getCliente() != null
-                )
-                .collect(
-                        Collectors.groupingBy(
-                                venda ->
-                                        venda.getCliente()
-                                                .getNome(),
-                                Collectors.counting()
-                        )
-                )
-                .entrySet()
-                .stream()
-                .sorted(
-                        Map.Entry.<String, Long>
-                                comparingByValue()
-                                .reversed()
-                )
-                .limit(10)
-                .map(entry ->
-                        new RankingClienteResponse(
-                                entry.getKey(),
-                                entry.getValue()
-                        )
-                )
-                .toList();
-    }
+                long raiasAtivas = raiaRepository.findByAtivaTrue()
+                                .size();
 
-    public List<OcupacaoRaiaResponse>
-        ocupacaoRaias() {
+                BigDecimal valorTotalEstoque = produtoRepository.findByAtivoTrue()
+                                .stream()
+                                .map(this::valorEstoqueProduto)
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
 
-            return agendamentoRepository.findAll()
-                    .stream()
-                    .collect(
-                            Collectors.groupingBy(
-                                    a ->
-                                            a.getRaia()
-                                                    .getDescricao(),
-                                    Collectors.counting()
-                            )
-                    )
-                    .entrySet()
-                    .stream()
-                    .sorted(
-                            Map.Entry.<String, Long>
-                                    comparingByValue()
-                                    .reversed()
-                    )
-                    .map(entry ->
-                            new OcupacaoRaiaResponse(
-                                    entry.getKey(),
-                                    entry.getValue()
-                            )
-                    )
-                    .toList();
+                return new DashboardResponse(
+                                clientesAtivos,
+                                produtosAtivos,
+                                totalVendas,
+                                valorTotalVendas,
+                                ticketMedio,
+                                produtoMaisVendido,
+                                quantidadeProdutoMaisVendido,
+                                clienteMaisComprador,
+                                quantidadeComprasCliente,
+                                receitaHoje,
+                                receitaMes,
+                                agendamentosAtivos,
+                                raiaMaisUtilizada,
+                                quantidadeAgendamentosRaia,
+                                raiasAtivas,
+                                valorTotalEstoque);
         }
 
-        public ComparativoFaturamentoResponse
-            comparativoFaturamento() {
+        public List<FaturamentoDiarioResponse> faturamentoDiario(
+                        LocalDate inicio,
+                        LocalDate fim) {
 
-                YearMonth atual =
-                        YearMonth.now();
+                LocalDate dataInicial = inicio == null
+                                ? LocalDate.now().minusDays(30)
+                                : inicio;
 
-                YearMonth anterior =
-                        atual.minusMonths(1);
+                LocalDate dataFinal = fim == null
+                                ? LocalDate.now()
+                                : fim;
 
-                BigDecimal faturamentoAtual =
-                        vendaRepository.findAll()
+                return vendaRepository.findAll()
                                 .stream()
-                                .filter(v ->
-                                        v.getCriadoEm() != null
-                                )
-                                .filter(v ->
-                                        YearMonth.from(
-                                                v.getCriadoEm()
-                                        ).equals(atual)
-                                )
+                                .filter(v -> v.getCriadoEm() != null)
+                                .filter(v -> !v.getCriadoEm().toLocalDate().isBefore(dataInicial))
+                                .filter(v -> !v.getCriadoEm().toLocalDate().isAfter(dataFinal))
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                venda -> venda.getCriadoEm().toLocalDate(),
+                                                                Collectors.mapping(
+                                                                                Venda::getValorTotal,
+                                                                                Collectors.reducing(
+                                                                                                BigDecimal.ZERO,
+                                                                                                BigDecimal::add))))
+                                .entrySet()
+                                .stream()
+                                .sorted(Map.Entry.comparingByKey())
+                                .map(entry -> new FaturamentoDiarioResponse(
+                                                entry.getKey(),
+                                                entry.getValue()))
+                                .toList();
+        }
+
+        public List<FaturamentoMensalResponse> faturamentoMensal(
+                        LocalDate inicio,
+                        LocalDate fim) {
+
+                LocalDate dataInicial = inicio == null
+                                ? LocalDate.now().minusMonths(12)
+                                : inicio;
+
+                LocalDate dataFinal = fim == null
+                                ? LocalDate.now()
+                                : fim;
+
+                return vendaRepository.findAll()
+                                .stream()
+                                .filter(v -> v.getCriadoEm() != null)
+                                .filter(v -> !v.getCriadoEm().toLocalDate().isBefore(dataInicial))
+                                .filter(v -> !v.getCriadoEm().toLocalDate().isAfter(dataFinal))
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                venda -> YearMonth.from(venda.getCriadoEm()),
+                                                                Collectors.mapping(
+                                                                                Venda::getValorTotal,
+                                                                                Collectors.reducing(
+                                                                                                BigDecimal.ZERO,
+                                                                                                BigDecimal::add))))
+                                .entrySet()
+                                .stream()
+                                .sorted(Map.Entry.comparingByKey())
+                                .map(entry -> new FaturamentoMensalResponse(
+                                                entry.getKey().toString(),
+                                                entry.getValue()))
+                                .toList();
+        }
+
+        private BigDecimal valorEstoqueProduto(
+                        Produto produto) {
+
+                return produto.getValorVenda()
+                                .multiply(
+                                                BigDecimal.valueOf(
+                                                                produto.getEstoque()));
+        }
+
+        public List<RankingProdutoResponse> topProdutos() {
+
+                return itemVendaRepository.findAll()
+                                .stream()
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                item -> item.getProduto()
+                                                                                .getNome(),
+                                                                Collectors.summingLong(
+                                                                                ItemVenda::getQuantidade)))
+                                .entrySet()
+                                .stream()
+                                .sorted(
+                                                Map.Entry.<String, Long>comparingByValue()
+                                                                .reversed())
+                                .limit(10)
+                                .map(entry -> new RankingProdutoResponse(
+                                                entry.getKey(),
+                                                entry.getValue()))
+                                .toList();
+        }
+
+        public List<RankingClienteResponse> topClientes() {
+
+                return vendaRepository.findAll()
+                                .stream()
+                                .filter(
+                                                venda -> venda.getCliente() != null)
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                venda -> venda.getCliente()
+                                                                                .getNome(),
+                                                                Collectors.counting()))
+                                .entrySet()
+                                .stream()
+                                .sorted(
+                                                Map.Entry.<String, Long>comparingByValue()
+                                                                .reversed())
+                                .limit(10)
+                                .map(entry -> new RankingClienteResponse(
+                                                entry.getKey(),
+                                                entry.getValue()))
+                                .toList();
+        }
+
+        public List<OcupacaoRaiaResponse> ocupacaoRaias() {
+
+                return agendamentoRepository.findAll()
+                                .stream()
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                a -> a.getRaia()
+                                                                                .getDescricao(),
+                                                                Collectors.counting()))
+                                .entrySet()
+                                .stream()
+                                .sorted(
+                                                Map.Entry.<String, Long>comparingByValue()
+                                                                .reversed())
+                                .map(entry -> new OcupacaoRaiaResponse(
+                                                entry.getKey(),
+                                                entry.getValue()))
+                                .toList();
+        }
+
+        public ComparativoFaturamentoResponse comparativoFaturamento() {
+
+                YearMonth atual = YearMonth.now();
+
+                YearMonth anterior = atual.minusMonths(1);
+
+                BigDecimal faturamentoAtual = vendaRepository.findAll()
+                                .stream()
+                                .filter(v -> v.getCriadoEm() != null)
+                                .filter(v -> YearMonth.from(
+                                                v.getCriadoEm()).equals(atual))
                                 .map(Venda::getValorTotal)
                                 .reduce(
-                                        BigDecimal.ZERO,
-                                        BigDecimal::add
-                                );
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
 
-                BigDecimal faturamentoAnterior =
-                        vendaRepository.findAll()
+                BigDecimal faturamentoAnterior = vendaRepository.findAll()
                                 .stream()
-                                .filter(v ->
-                                        v.getCriadoEm() != null
-                                )
-                                .filter(v ->
-                                        YearMonth.from(
-                                                v.getCriadoEm()
-                                        ).equals(anterior)
-                                )
+                                .filter(v -> v.getCriadoEm() != null)
+                                .filter(v -> YearMonth.from(
+                                                v.getCriadoEm()).equals(anterior))
                                 .map(Venda::getValorTotal)
                                 .reduce(
-                                        BigDecimal.ZERO,
-                                        BigDecimal::add
-                                );
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
 
-                BigDecimal diferenca =
-                        faturamentoAtual.subtract(
-                                faturamentoAnterior
-                        );
+                BigDecimal diferenca = faturamentoAtual.subtract(
+                                faturamentoAnterior);
 
                 double percentual = 0;
 
                 if (faturamentoAnterior.compareTo(
-                        BigDecimal.ZERO
-                ) > 0) {
+                                BigDecimal.ZERO) > 0) {
 
-                    percentual =
-                            diferenca
-                                    .multiply(
-                                            BigDecimal.valueOf(
-                                                    100
-                                            )
-                                    )
-                                    .divide(
-                                            faturamentoAnterior,
-                                            2,
-                                            RoundingMode.HALF_UP
-                                    )
-                                    .doubleValue();
+                        percentual = diferenca
+                                        .multiply(
+                                                        BigDecimal.valueOf(
+                                                                        100))
+                                        .divide(
+                                                        faturamentoAnterior,
+                                                        2,
+                                                        RoundingMode.HALF_UP)
+                                        .doubleValue();
                 }
 
                 return new ComparativoFaturamentoResponse(
-                        faturamentoAtual,
-                        faturamentoAnterior,
-                        diferenca,
-                        percentual
-                );
-            }
-
-
-            public MetaFaturamentoResponse
-                metaFaturamento(
-                        BigDecimal meta
-                ) {
-
-                    BigDecimal realizado =
-                            vendaRepository.findAll()
-                                    .stream()
-                                    .map(Venda::getValorTotal)
-                                    .reduce(
-                                            BigDecimal.ZERO,
-                                            BigDecimal::add
-                                    );
-
-                    Double percentual =
-                            meta.compareTo(BigDecimal.ZERO) == 0
-                                    ? 0D
-                                    : realizado
-                                    .multiply(
-                                            BigDecimal.valueOf(100)
-                                    )
-                                    .divide(
-                                            meta,
-                                            2,
-                                            RoundingMode.HALF_UP
-                                    )
-                                    .doubleValue();
-
-                    return new MetaFaturamentoResponse(
-                            meta,
-                            realizado,
-                            percentual
-                    );
-                }
-
-        public MetaVendaResponse
-            metaVendas(
-                    Long meta
-            ) {
-
-                long realizado =
-                        vendaRepository.count();
-
-                double percentual =
-                        meta == 0
-                                ? 0
-                                : (
-                                realizado * 100.0
-                        ) / meta;
-
-                return new MetaVendaResponse(
-                        meta,
-                        realizado,
-                        percentual
-                );
-            }
-
-    public MetaAgendamentoResponse
-        metaAgendamentos(
-                Long meta
-        ) {
-
-            long realizado =
-                    agendamentoRepository.count();
-
-            double percentual =
-                    meta == 0
-                            ? 0
-                            : (
-                            realizado * 100.0
-                    ) / meta;
-
-            return new MetaAgendamentoResponse(
-                    meta,
-                    realizado,
-                    percentual
-            );
+                                faturamentoAtual,
+                                faturamentoAnterior,
+                                diferenca,
+                                percentual);
         }
 
-    public TicketMedioPeriodoResponse
-        ticketMedio(
-                LocalDate inicio,
-                LocalDate fim
-        ) {
+        public MetaFaturamentoResponse metaFaturamento(
+                        BigDecimal meta) {
 
-            List<Venda> vendas =
-                    vendaRepository.findAll()
-                            .stream()
-                            .filter(v ->
-                                    v.getCriadoEm() != null
-                            )
-                            .filter(v ->
-                                    !v.getCriadoEm()
-                                            .toLocalDate()
-                                            .isBefore(inicio)
-                            )
-                            .filter(v ->
-                                    !v.getCriadoEm()
-                                            .toLocalDate()
-                                            .isAfter(fim)
-                            )
-                            .toList();
+                BigDecimal realizado = vendaRepository.findAll()
+                                .stream()
+                                .map(Venda::getValorTotal)
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
 
-            BigDecimal total =
-                    vendas.stream()
-                            .map(Venda::getValorTotal)
-                            .reduce(
-                                    BigDecimal.ZERO,
-                                    BigDecimal::add
-                            );
+                Double percentual = meta.compareTo(BigDecimal.ZERO) == 0
+                                ? 0D
+                                : realizado
+                                                .multiply(
+                                                                BigDecimal.valueOf(100))
+                                                .divide(
+                                                                meta,
+                                                                2,
+                                                                RoundingMode.HALF_UP)
+                                                .doubleValue();
 
-            BigDecimal ticket =
-                    vendas.isEmpty()
-                            ? BigDecimal.ZERO
-                            : total.divide(
-                                    BigDecimal.valueOf(
-                                            vendas.size()
-                                    ),
-                                    2,
-                                    RoundingMode.HALF_UP
-                            );
+                return new MetaFaturamentoResponse(
+                                meta,
+                                realizado,
+                                percentual);
+        }
 
-            return new TicketMedioPeriodoResponse(
-                    inicio + " até " + fim,
-                    ticket
-            );
+        public MetaVendaResponse metaVendas(
+                        Long meta) {
+
+                long realizado = vendaRepository.count();
+
+                double percentual = meta == 0
+                                ? 0
+                                : (realizado * 100.0) / meta;
+
+                return new MetaVendaResponse(
+                                meta,
+                                realizado,
+                                percentual);
+        }
+
+        public MetaAgendamentoResponse metaAgendamentos(
+                        Long meta) {
+
+                long realizado = agendamentoRepository.count();
+
+                double percentual = meta == 0
+                                ? 0
+                                : (realizado * 100.0) / meta;
+
+                return new MetaAgendamentoResponse(
+                                meta,
+                                realizado,
+                                percentual);
+        }
+
+        public TicketMedioPeriodoResponse ticketMedio(
+                        LocalDate inicio,
+                        LocalDate fim) {
+
+                List<Venda> vendas = vendaRepository.findAll()
+                                .stream()
+                                .filter(v -> v.getCriadoEm() != null)
+                                .filter(v -> !v.getCriadoEm()
+                                                .toLocalDate()
+                                                .isBefore(inicio))
+                                .filter(v -> !v.getCriadoEm()
+                                                .toLocalDate()
+                                                .isAfter(fim))
+                                .toList();
+
+                BigDecimal total = vendas.stream()
+                                .map(Venda::getValorTotal)
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
+
+                BigDecimal ticket = vendas.isEmpty()
+                                ? BigDecimal.ZERO
+                                : total.divide(
+                                                BigDecimal.valueOf(
+                                                                vendas.size()),
+                                                2,
+                                                RoundingMode.HALF_UP);
+
+                return new TicketMedioPeriodoResponse(
+                                inicio + " até " + fim,
+                                ticket);
         }
 
         public SaudeEstoqueResponse saudeEstoque() {
 
-            var produtos =
-                    produtoRepository.findByAtivoTrue();
+                var produtos = produtoRepository.findByAtivoTrue();
 
-            long semEstoque =
-                    produtos.stream()
-                            .filter(p ->
-                                    p.getEstoque() == null
-                                            || p.getEstoque() <= 0
-                            )
-                            .count();
+                long semEstoque = produtos.stream()
+                                .filter(p -> p.getEstoque() == null
+                                                || p.getEstoque() <= 0)
+                                .count();
 
-            long estoqueCritico =
-                    produtos.stream()
-                            .filter(p ->
-                                    p.getEstoque() != null
-                                            && p.getEstoque() > 0
-                                            && p.getEstoque() <= 10
-                            )
-                            .count();
+                long estoqueCritico = produtos.stream()
+                                .filter(p -> p.getEstoque() != null
+                                                && p.getEstoque() > 0
+                                                && p.getEstoque() <= 10)
+                                .count();
 
-            long estoqueSaudavel =
-                    produtos.stream()
-                            .filter(p ->
-                                    p.getEstoque() != null
-                                            && p.getEstoque() > 10
-                            )
-                            .count();
+                long estoqueSaudavel = produtos.stream()
+                                .filter(p -> p.getEstoque() != null
+                                                && p.getEstoque() > 10)
+                                .count();
 
-            BigDecimal valorFinanceiroEstoque =
-                    produtos.stream()
-                            .map(produto ->
-                                    produto.getValorVenda()
-                                            .multiply(
-                                                    BigDecimal.valueOf(
-                                                            produto.getEstoque()
-                                                    )
-                                            )
-                            )
-                            .reduce(
-                                    BigDecimal.ZERO,
-                                    BigDecimal::add
-                            );
+                BigDecimal valorFinanceiroEstoque = produtos.stream()
+                                .map(produto -> produto.getValorVenda()
+                                                .multiply(
+                                                                BigDecimal.valueOf(
+                                                                                produto.getEstoque())))
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
 
-            return new SaudeEstoqueResponse(
-                    semEstoque,
-                    estoqueCritico,
-                    estoqueSaudavel,
-                    (long) produtos.size(),
-                    valorFinanceiroEstoque
-            );
+                return new SaudeEstoqueResponse(
+                                semEstoque,
+                                estoqueCritico,
+                                estoqueSaudavel,
+                                (long) produtos.size(),
+                                valorFinanceiroEstoque);
         }
 
         public ConversaoOperacionalResponse conversaoOperacional() {
 
-            long agendados =
-                    agendamentoRepository.findAll()
-                            .stream()
-                            .filter(a ->
-                                    "AGENDADO".equalsIgnoreCase(
-                                            a.getStatus()
-                                    )
-                            )
-                            .count();
+                long agendados = agendamentoRepository.findAll()
+                                .stream()
+                                .filter(a -> "AGENDADO".equalsIgnoreCase(
+                                                a.getStatus()))
+                                .count();
 
-            long finalizados =
-                    agendamentoRepository.findAll()
-                            .stream()
-                            .filter(a ->
-                                    "FINALIZADO".equalsIgnoreCase(
-                                            a.getStatus()
-                                    )
-                            )
-                            .count();
+                long finalizados = agendamentoRepository.findAll()
+                                .stream()
+                                .filter(a -> "FINALIZADO".equalsIgnoreCase(
+                                                a.getStatus()))
+                                .count();
 
-            long cancelados =
-                    agendamentoRepository.findAll()
-                            .stream()
-                            .filter(a ->
-                                    "CANCELADO".equalsIgnoreCase(
-                                            a.getStatus()
-                                    )
-                            )
-                            .count();
+                long cancelados = agendamentoRepository.findAll()
+                                .stream()
+                                .filter(a -> "CANCELADO".equalsIgnoreCase(
+                                                a.getStatus()))
+                                .count();
 
-            long total =
-                    agendados +
-                    finalizados +
-                    cancelados;
+                long total = agendados +
+                                finalizados +
+                                cancelados;
 
-            double taxaConversao =
-                    total == 0
-                            ? 0
-                            : (finalizados * 100.0)
-                            / total;
+                double taxaConversao = total == 0
+                                ? 0
+                                : (finalizados * 100.0)
+                                                / total;
 
-            double taxaCancelamento =
-                    total == 0
-                            ? 0
-                            : (cancelados * 100.0)
-                            / total;
+                double taxaCancelamento = total == 0
+                                ? 0
+                                : (cancelados * 100.0)
+                                                / total;
 
-            return new ConversaoOperacionalResponse(
-                    agendados,
-                    finalizados,
-                    cancelados,
-                    taxaConversao,
-                    taxaCancelamento
-            );
+                return new ConversaoOperacionalResponse(
+                                agendados,
+                                finalizados,
+                                cancelados,
+                                taxaConversao,
+                                taxaCancelamento);
         }
 
-        public List<ReceitaFormaPagamentoResponse>
-            receitaPorFormaPagamento() {
+        public List<ReceitaFormaPagamentoResponse> receitaPorFormaPagamento() {
 
                 return vendaRepository.findAll()
-                        .stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        venda ->
-                                                venda.getFormaPagamento() == null
-                                                        ? "NÃO INFORMADO"
-                                                        : venda.getFormaPagamento(),
-                                        Collectors.mapping(
-                                                Venda::getValorTotal,
-                                                Collectors.reducing(
-                                                        BigDecimal.ZERO,
-                                                        BigDecimal::add
-                                                )
-                                        )
-                                )
-                        )
-                        .entrySet()
-                        .stream()
-                        .sorted(
-                                Map.Entry.<String, BigDecimal>
-                                        comparingByValue()
-                                        .reversed()
-                        )
-                        .map(entry ->
-                                new ReceitaFormaPagamentoResponse(
-                                        entry.getKey(),
-                                        entry.getValue()
-                                )
-                        )
-                        .toList();
-            }
+                                .stream()
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                venda -> venda.getFormaPagamento() == null
+                                                                                ? "NÃO INFORMADO"
+                                                                                : venda.getFormaPagamento(),
+                                                                Collectors.mapping(
+                                                                                Venda::getValorTotal,
+                                                                                Collectors.reducing(
+                                                                                                BigDecimal.ZERO,
+                                                                                                BigDecimal::add))))
+                                .entrySet()
+                                .stream()
+                                .sorted(
+                                                Map.Entry.<String, BigDecimal>comparingByValue()
+                                                                .reversed())
+                                .map(entry -> new ReceitaFormaPagamentoResponse(
+                                                entry.getKey(),
+                                                entry.getValue()))
+                                .toList();
+        }
 
-            public List<ReceitaCategoriaResponse>
-            receitaPorCategoria() {
+        public List<ReceitaCategoriaResponse> receitaPorCategoria() {
 
                 return itemVendaRepository.findAll()
-                        .stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        item ->
-                                                item.getProduto()
-                                                        .getCategoria()
-                                                        .getNome(),
-                                        Collectors.mapping(
-                                                ItemVenda::getSubtotal,
-                                                Collectors.reducing(
-                                                        BigDecimal.ZERO,
-                                                        BigDecimal::add
-                                                )
-                                        )
-                                )
-                        )
-                        .entrySet()
-                        .stream()
-                        .sorted(
-                                Map.Entry.<String, BigDecimal>
-                                        comparingByValue()
-                                        .reversed()
-                        )
-                        .map(entry ->
-                                new ReceitaCategoriaResponse(
-                                        entry.getKey(),
-                                        entry.getValue()
-                                )
-                        )
-                        .toList();
-            }
+                                .stream()
+                                .collect(
+                                                Collectors.groupingBy(
+                                                                item -> item.getProduto()
+                                                                                .getCategoria()
+                                                                                .getNome(),
+                                                                Collectors.mapping(
+                                                                                ItemVenda::getSubtotal,
+                                                                                Collectors.reducing(
+                                                                                                BigDecimal.ZERO,
+                                                                                                BigDecimal::add))))
+                                .entrySet()
+                                .stream()
+                                .sorted(
+                                                Map.Entry.<String, BigDecimal>comparingByValue()
+                                                                .reversed())
+                                .map(entry -> new ReceitaCategoriaResponse(
+                                                entry.getKey(),
+                                                entry.getValue()))
+                                .toList();
+        }
 
 }

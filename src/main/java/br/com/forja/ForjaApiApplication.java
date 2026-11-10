@@ -13,7 +13,6 @@ public class ForjaApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(
                 ForjaApiApplication.class,
-                args
-        );
+                args);
     }
 }

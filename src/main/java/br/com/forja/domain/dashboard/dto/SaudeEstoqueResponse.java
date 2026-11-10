@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 
 public record SaudeEstoqueResponse(
 
-        Long produtosSemEstoque,
+                Long produtosSemEstoque,
 
-        Long produtosEstoqueCritico,
+                Long produtosEstoqueCritico,
 
-        Long produtosEstoqueSaudavel,
+                Long produtosEstoqueSaudavel,
 
-        Long totalProdutos,
+                Long totalProdutos,
 
-        BigDecimal valorFinanceiroEstoque
+                BigDecimal valorFinanceiroEstoque
 
 ) {
 }

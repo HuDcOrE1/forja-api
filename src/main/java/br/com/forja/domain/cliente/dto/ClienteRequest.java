@@ -6,53 +6,31 @@ import jakarta.validation.constraints.Size;
 
 public record ClienteRequest(
 
-        @NotBlank(message = "Nome é obrigatório")
-        String nome,
+                @NotBlank(message = "Nome é obrigatório") String nome,
 
-        @NotBlank(message = "CPF é obrigatório")
-        @Size(
-                min = 11,
-                max = 11,
-                message = "CPF deve possuir 11 dígitos"
-        )
-        String cpf,
+                @NotBlank(message = "CPF é obrigatório") @Size(min = 11, max = 11, message = "CPF deve possuir 11 dígitos") String cpf,
 
-        @NotBlank(message = "Telefone é obrigatório")
-        @Size(
-                max = 30,
-                message = "Telefone inválido"
-        )
-        String telefone,
+                @NotBlank(message = "Telefone é obrigatório") @Size(max = 30, message = "Telefone inválido") String telefone,
 
-        @Email(message = "Email inválido")
-        @NotBlank(message = "Email é obrigatório")
-        String email,
+                @Email(message = "Email inválido") @NotBlank(message = "Email é obrigatório") String email,
 
-        String cr,
+                String cr,
 
-        Boolean ativo,
+                Boolean ativo,
 
-        @Size(
-                max = 8,
-                message = "CEP inválido"
-        )
-        String cep,
+                @Size(max = 8, message = "CEP inválido") String cep,
 
-        String logradouro,
+                String logradouro,
 
-        String numero,
+                String numero,
 
-        String complemento,
+                String complemento,
 
-        String bairro,
+                String bairro,
 
-        String cidade,
+                String cidade,
 
-        @Size(
-                max = 2,
-                message = "UF inválida"
-        )
-        String uf
+                @Size(max = 2, message = "UF inválida") String uf
 
 ) {
 }

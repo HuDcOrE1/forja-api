@@ -2,15 +2,15 @@ package br.com.forja.domain.dashboard.dto;
 
 public record ConversaoOperacionalResponse(
 
-        Long agendados,
+                Long agendados,
 
-        Long finalizados,
+                Long finalizados,
 
-        Long cancelados,
+                Long cancelados,
 
-        Double taxaConversao,
+                Double taxaConversao,
 
-        Double taxaCancelamento
+                Double taxaCancelamento
 
 ) {
 }

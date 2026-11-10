@@ -16,94 +16,85 @@ import java.util.List;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
-    private String secret;
+        @Value("${jwt.secret}")
+        private String secret;
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+        @Value("${jwt.expiration}")
+        private Long expiration;
 
-    private SecretKey secretKey;
+        private SecretKey secretKey;
 
-    @PostConstruct
-    public void init() {
+        @PostConstruct
+        public void init() {
 
-        this.secretKey =
-                Keys.hmacShaKeyFor(
-                        secret.getBytes(
-                                StandardCharsets.UTF_8
-                        )
-                );
-    }
-
-    public String gerarToken(
-            String email,
-            Collection<String> roles
-    ) {
-
-        return Jwts.builder()
-                .subject(email)
-                .claim("roles", roles)
-                .issuedAt(new Date())
-                .expiration(
-                        new Date(
-                                System.currentTimeMillis()
-                                        + expiration
-                        )
-                )
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extrairEmail(String token) {
-
-        return obterClaims(token)
-                .getSubject();
-    }
-
-    public List<String> extrairRoles(
-            String token
-    ) {
-
-        Object roles =
-                obterClaims(token)
-                        .get("roles");
-
-        if (roles instanceof List<?> lista) {
-
-            return lista
-                    .stream()
-                    .map(Object::toString)
-                    .toList();
+                this.secretKey = Keys.hmacShaKeyFor(
+                                secret.getBytes(
+                                                StandardCharsets.UTF_8));
         }
 
-        return List.of();
-    }
+        public String gerarToken(
+                        String email,
+                        Collection<String> roles) {
 
-    public boolean tokenValido(String token) {
-
-        try {
-
-            Jwts.parser()
-                    .verifyWith(secretKey)
-                    .build()
-                    .parseSignedClaims(token);
-
-            return true;
-
-        } catch (Exception ex) {
-
-            return false;
+                return Jwts.builder()
+                                .subject(email)
+                                .claim("roles", roles)
+                                .issuedAt(new Date())
+                                .expiration(
+                                                new Date(
+                                                                System.currentTimeMillis()
+                                                                                + expiration))
+                                .signWith(secretKey)
+                                .compact();
         }
-    }
 
-    private Claims obterClaims(
-            String token
-    ) {
+        public String extrairEmail(String token) {
 
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
+                return obterClaims(token)
+                                .getSubject();
+        }
+
+        public List<String> extrairRoles(
+                        String token) {
+
+                Object roles = obterClaims(token)
+                                .get("roles");
+
+                if (roles instanceof List<?> lista) {
+
+                        return lista
+                                        .stream()
+                                        .map(Object::toString)
+                                        .toList();
+                }
+
+                return List.of();
+        }
+
+        public boolean tokenValido(String token) {
+
+                try {
+
+                        Jwts.parser()
+                                        .verifyWith(secretKey)
+                                        .build()
+                                        .parseSignedClaims(token);
+
+                        return true;
+
+                } catch (Exception ex) {
+
+                        return false;
+                }
+        }
+
+        private Claims obterClaims(
+                        String token) {
+
+                return Jwts.parser()
+                                .verifyWith(secretKey)
+                                .build()
+                                .parseSignedClaims(token)
+                                .getPayload();
+        }
 }

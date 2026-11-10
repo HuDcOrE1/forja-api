@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 
 public record ErrorResponse(
 
-        Integer status,
-        String erro,
-        LocalDateTime dataHora
+                Integer status,
+                String erro,
+                LocalDateTime dataHora
 
 ) {
 }

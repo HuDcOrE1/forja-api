@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 
 public record ItemVendaResponse(
 
-        Long produtoId,
+                Long produtoId,
 
-        String produto,
+                String produto,
 
-        Integer quantidade,
+                Integer quantidade,
 
-        BigDecimal valorUnitario,
+                BigDecimal valorUnitario,
 
-        BigDecimal subtotal
+                BigDecimal subtotal
 
 ) {
 }

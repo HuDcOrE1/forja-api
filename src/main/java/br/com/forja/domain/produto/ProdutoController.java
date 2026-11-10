@@ -15,69 +15,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProdutoController {
 
-    private final ProdutoService service;
+        private final ProdutoService service;
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @GetMapping
-    public List<ProdutoResponse> listar() {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @GetMapping
+        public List<ProdutoResponse> listar() {
 
-        return service.listar();
-    }
+                return service.listar();
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE')"
-    )
-    @GetMapping("/{id}")
-    public ProdutoResponse buscarPorId(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @GetMapping("/{id}")
+        public ProdutoResponse buscarPorId(
+                        @PathVariable Long id) {
 
-        return service.buscarPorId(id);
-    }
+                return service.buscarPorId(id);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE')"
-    )
-    @PostMapping
-    public ProdutoResponse salvar(
-            @Valid
-            @RequestBody ProdutoRequest request
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+        @PostMapping
+        public ProdutoResponse salvar(
+                        @Valid @RequestBody ProdutoRequest request) {
 
-        return service.salvar(request);
-    }
+                return service.salvar(request);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE')"
-    )
-    @PutMapping("/{id}")
-    public ProdutoResponse atualizar(
-            @PathVariable Long id,
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+        @PutMapping("/{id}")
+        public ProdutoResponse atualizar(
+                        @PathVariable Long id,
 
-            @Valid
-            @RequestBody ProdutoRequest request
-    ) {
+                        @Valid @RequestBody ProdutoRequest request) {
 
-        return service.atualizar(
-                id,
-                request
-        );
-    }
+                return service.atualizar(
+                                id,
+                                request);
+        }
 
-    @PreAuthorize(
-            "hasRole('ADMIN')"
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasRole('ADMIN')")
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> excluir(
+                        @PathVariable Long id) {
 
-        service.excluir(id);
+                service.excluir(id);
 
-        return ResponseEntity
-                .noContent()
-                .build();
-    }
+                return ResponseEntity
+                                .noContent()
+                                .build();
+        }
 }

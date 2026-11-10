@@ -4,23 +4,23 @@ import java.time.LocalDateTime;
 
 public record AgendamentoResponse(
 
-        Long id,
+                Long id,
 
-        Long clienteId,
+                Long clienteId,
 
-        String cliente,
+                String cliente,
 
-        Long raiaId,
+                Long raiaId,
 
-        String raia,
+                String raia,
 
-        LocalDateTime dataInicio,
+                LocalDateTime dataInicio,
 
-        LocalDateTime dataFim,
+                LocalDateTime dataFim,
 
-        String status,
+                String status,
 
-        String observacao
+                String observacao
 
 ) {
 }

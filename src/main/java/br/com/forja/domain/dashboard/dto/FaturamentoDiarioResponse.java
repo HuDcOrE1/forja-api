@@ -5,9 +5,9 @@ import java.time.LocalDate;
 
 public record FaturamentoDiarioResponse(
 
-        LocalDate data,
+                LocalDate data,
 
-        BigDecimal valor
+                BigDecimal valor
 
 ) {
 }

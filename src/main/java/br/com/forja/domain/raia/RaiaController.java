@@ -15,69 +15,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RaiaController {
 
-    private final RaiaService service;
+        private final RaiaService service;
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')"
-    )
-    @GetMapping
-    public List<RaiaResponse> listar() {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")
+        @GetMapping
+        public List<RaiaResponse> listar() {
 
-        return service.listar();
-    }
+                return service.listar();
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')"
-    )
-    @GetMapping("/{id}")
-    public RaiaResponse buscarPorId(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")
+        @GetMapping("/{id}")
+        public RaiaResponse buscarPorId(
+                        @PathVariable Long id) {
 
-        return service.buscarPorId(id);
-    }
+                return service.buscarPorId(id);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE')"
-    )
-    @PostMapping
-    public RaiaResponse salvar(
-            @Valid
-            @RequestBody RaiaRequest request
-    ) {
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+        @PostMapping
+        public RaiaResponse salvar(
+                        @Valid @RequestBody RaiaRequest request) {
 
-        return service.salvar(request);
-    }
+                return service.salvar(request);
+        }
 
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','GERENTE')"
-    )
-    @PutMapping("/{id}")
-    public RaiaResponse atualizar(
-            @PathVariable Long id,
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+        @PutMapping("/{id}")
+        public RaiaResponse atualizar(
+                        @PathVariable Long id,
 
-            @Valid
-            @RequestBody RaiaRequest request
-    ) {
+                        @Valid @RequestBody RaiaRequest request) {
 
-        return service.atualizar(
-                id,
-                request
-        );
-    }
+                return service.atualizar(
+                                id,
+                                request);
+        }
 
-    @PreAuthorize(
-            "hasRole('ADMIN')"
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(
-            @PathVariable Long id
-    ) {
+        @PreAuthorize("hasRole('ADMIN')")
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> excluir(
+                        @PathVariable Long id) {
 
-        service.excluir(id);
+                service.excluir(id);
 
-        return ResponseEntity
-                .noContent()
-                .build();
-    }
+                return ResponseEntity
+                                .noContent()
+                                .build();
+        }
 }

@@ -2,13 +2,13 @@ package br.com.forja.domain.raia.dto;
 
 public record RaiaResponse(
 
-        Long id,
+                Long id,
 
-        Integer numero,
+                Integer numero,
 
-        String descricao,
+                String descricao,
 
-        Boolean ativa
+                Boolean ativa
 
 ) {
 }
