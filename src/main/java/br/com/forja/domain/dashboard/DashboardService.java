@@ -255,7 +255,7 @@ public class DashboardService {
                 return produto.getValorVenda()
                                 .multiply(
                                                 BigDecimal.valueOf(
-                                                                produto.getEstoque()));
+                                                                produto.getEstoqueAtual()));
         }
 
         public List<RankingProdutoResponse> topProdutos() {
@@ -471,26 +471,28 @@ public class DashboardService {
                 var produtos = produtoRepository.findByAtivoTrue();
 
                 long semEstoque = produtos.stream()
-                                .filter(p -> p.getEstoque() == null
-                                                || p.getEstoque() <= 0)
+                                .filter(p -> p.getEstoqueAtual() == null
+                                                || p.getEstoqueAtual() <= 0)
                                 .count();
 
                 long estoqueCritico = produtos.stream()
-                                .filter(p -> p.getEstoque() != null
-                                                && p.getEstoque() > 0
-                                                && p.getEstoque() <= 10)
+                                .filter(p -> p.getEstoqueAtual() != null
+                                                && p.getEstoqueMinimo() != null
+                                                && p.getEstoqueAtual() > 0
+                                                && p.getEstoqueAtual() <= p.getEstoqueMinimo())
                                 .count();
 
                 long estoqueSaudavel = produtos.stream()
-                                .filter(p -> p.getEstoque() != null
-                                                && p.getEstoque() > 10)
+                                .filter(p -> p.getEstoqueAtual() != null
+                                                && p.getEstoqueMinimo() != null
+                                                && p.getEstoqueAtual() > p.getEstoqueMinimo())
                                 .count();
 
                 BigDecimal valorFinanceiroEstoque = produtos.stream()
                                 .map(produto -> produto.getValorVenda()
                                                 .multiply(
                                                                 BigDecimal.valueOf(
-                                                                                produto.getEstoque())))
+                                                                                produto.getEstoqueAtual())))
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);

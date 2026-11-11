@@ -37,7 +37,7 @@ public class RelatorioService {
                                 .stream()
                                 .filter(produto -> filtro == null
                                                 || filtro.estoqueMinimo() == null
-                                                || produto.getEstoque() >= filtro.estoqueMinimo())
+                                                || produto.getEstoqueAtual() >= filtro.estoqueMinimo())
                                 .filter(produto -> filtro == null
                                                 || filtro.categoriaId() == null
                                                 || produto.getCategoria()
@@ -224,13 +224,13 @@ public class RelatorioService {
                 BigDecimal total = produto.getValorVenda()
                                 .multiply(
                                                 BigDecimal.valueOf(
-                                                                produto.getEstoque()));
+                                                                produto.getEstoqueAtual()));
 
                 return new RelatorioEstoqueResponse(
                                 produto.getId(),
                                 produto.getCodigo(),
                                 produto.getNome(),
-                                produto.getEstoque(),
+                                produto.getEstoqueAtual(),
                                 produto.getValorVenda(),
                                 total);
         }

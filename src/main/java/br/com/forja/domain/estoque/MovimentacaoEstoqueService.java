@@ -24,8 +24,8 @@ public class MovimentacaoEstoqueService {
                 Produto produto = produtoRepository.findById(
                                 request.produtoId()).orElseThrow();
 
-                produto.setEstoque(
-                                produto.getEstoque()
+                produto.setEstoqueAtual(
+                                produto.getEstoqueAtual()
                                                 + request.quantidade());
 
                 produtoRepository.save(produto);
@@ -41,9 +41,11 @@ public class MovimentacaoEstoqueService {
                                                 LocalDateTime.now())
                                 .build();
 
-                movimentacao = repository.save(movimentacao);
+                movimentacao = repository.save(
+                                movimentacao);
 
-                return toResponse(movimentacao);
+                return toResponse(
+                                movimentacao);
         }
 
         public MovimentacaoEstoqueResponse saida(
@@ -52,14 +54,14 @@ public class MovimentacaoEstoqueService {
                 Produto produto = produtoRepository.findById(
                                 request.produtoId()).orElseThrow();
 
-                if (produto.getEstoque() < request.quantidade()) {
+                if (produto.getEstoqueAtual() < request.quantidade()) {
 
                         throw new RuntimeException(
                                         "Estoque insuficiente.");
                 }
 
-                produto.setEstoque(
-                                produto.getEstoque()
+                produto.setEstoqueAtual(
+                                produto.getEstoqueAtual()
                                                 - request.quantidade());
 
                 produtoRepository.save(produto);
@@ -75,9 +77,11 @@ public class MovimentacaoEstoqueService {
                                                 LocalDateTime.now())
                                 .build();
 
-                movimentacao = repository.save(movimentacao);
+                movimentacao = repository.save(
+                                movimentacao);
 
-                return toResponse(movimentacao);
+                return toResponse(
+                                movimentacao);
         }
 
         public List<MovimentacaoEstoqueResponse> historico() {
@@ -103,12 +107,20 @@ public class MovimentacaoEstoqueService {
                         MovimentacaoEstoque movimentacao) {
 
                 return new MovimentacaoEstoqueResponse(
+
                                 movimentacao.getId(),
+
                                 movimentacao.getProduto().getId(),
+
                                 movimentacao.getProduto().getNome(),
+
                                 movimentacao.getTipo(),
+
                                 movimentacao.getQuantidade(),
+
                                 movimentacao.getObservacao(),
+
                                 movimentacao.getCriadoEm());
         }
+
 }

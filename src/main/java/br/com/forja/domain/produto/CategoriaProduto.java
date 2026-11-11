@@ -20,6 +20,11 @@ public class CategoriaProduto {
 
     private String nome;
 
+    private String descricao;
+
+    private Boolean ativo;
+
     @Column(name = "criado_em")
     private LocalDateTime criadoEm;
+
 }

@@ -1,12 +1,10 @@
 package br.com.forja.domain.produto;
 
+import br.com.forja.shared.audit.Auditavel;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import br.com.forja.shared.audit.Auditavel;
 
 @Entity
 @Table(name = "produto")
@@ -15,7 +13,7 @@ import br.com.forja.shared.audit.Auditavel;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Produto extends Auditavel{
+public class Produto extends Auditavel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +32,17 @@ public class Produto extends Auditavel{
     @JoinColumn(name = "categoria_id")
     private CategoriaProduto categoria;
 
-    @Column(name = "estoque")
-    private Integer estoque;
+    @Column(name = "marca")
+    private String marca;
+
+    @Column(name = "unidade_medida")
+    private String unidadeMedida;
+
+    @Column(name = "estoque_atual")
+    private Integer estoqueAtual;
+
+    @Column(name = "estoque_minimo")
+    private Integer estoqueMinimo;
 
     @Column(name = "valor_custo")
     private BigDecimal valorCusto;
