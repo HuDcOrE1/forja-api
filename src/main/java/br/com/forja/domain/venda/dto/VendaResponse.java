@@ -6,25 +6,29 @@ import java.util.List;
 
 public record VendaResponse(
 
-                Long id,
+        Long id,
 
-                Long clienteId,
+        Long clienteId,
+        String cliente,
 
-                String cliente,
+        Long usuarioId,
+        String usuario,
 
-                Long usuarioId,
+        BigDecimal valorBruto,
 
-                String usuario,
+        BigDecimal valorDesconto,
 
-                BigDecimal valorTotal,
+        BigDecimal valorAcrescimo,
 
-                String formaPagamento,
+        BigDecimal valorLiquido,
 
-                String status,
+        String status,
 
-                LocalDateTime criadoEm,
+        LocalDateTime criadoEm,
 
-                List<ItemVendaResponse> itens
+        List<ItemVendaResponse> itens,
+
+        List<PagamentoVendaResponse> pagamentos
 
 ) {
 }

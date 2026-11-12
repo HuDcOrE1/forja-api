@@ -93,12 +93,17 @@ public class RelatorioService {
                                                                                 .equals(filtro.clienteId())))
                                 .filter(venda -> filtro == null
                                                 || filtro.formaPagamento() == null
-                                                || venda.getFormaPagamento()
+                                                || venda.getPagamentos()
+                                                                .stream()
+                                                                .findFirst()
+                                                                .map(p -> p.getFormaPagamento().name())
+                                                                .orElse("NÃO INFORMADO")
                                                                 .equalsIgnoreCase(
                                                                                 filtro.formaPagamento()))
                                 .filter(venda -> filtro == null
                                                 || filtro.status() == null
                                                 || venda.getStatus()
+                                                                .name()
                                                                 .equalsIgnoreCase(
                                                                                 filtro.status()))
                                 .filter(venda -> filtro == null
@@ -244,9 +249,13 @@ public class RelatorioService {
                                                 ? venda.getCliente().getNome()
                                                 : null,
                                 venda.getUsuario().getNome(),
-                                venda.getValorTotal(),
-                                venda.getFormaPagamento(),
-                                venda.getStatus(),
+                                venda.getValorLiquido(),
+                                venda.getPagamentos()
+                                                .stream()
+                                                .findFirst()
+                                                .map(p -> p.getFormaPagamento().name())
+                                                .orElse("NÃO INFORMADO"),
+                                venda.getStatus().name(),
                                 venda.getCriadoEm());
         }
 

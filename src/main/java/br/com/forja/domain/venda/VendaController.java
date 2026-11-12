@@ -1,5 +1,6 @@
 package br.com.forja.domain.venda;
 
+import br.com.forja.domain.venda.dto.CancelarVendaRequest;
 import br.com.forja.domain.venda.dto.VendaRequest;
 import br.com.forja.domain.venda.dto.VendaResponse;
 import jakarta.validation.Valid;
@@ -37,5 +38,14 @@ public class VendaController {
                         @Valid @RequestBody VendaRequest request) {
 
                 return service.salvar(request);
+        }
+
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+        @PatchMapping("/{id}/cancelar")
+        public VendaResponse cancelar(
+                        @PathVariable Long id,
+                        @Valid @RequestBody CancelarVendaRequest request) {
+
+                return service.cancelar(id, request);
         }
 }

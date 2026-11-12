@@ -9,6 +9,7 @@ import br.com.forja.domain.produto.ProdutoRepository;
 import br.com.forja.domain.raia.RaiaRepository;
 import br.com.forja.domain.venda.ItemVenda;
 import br.com.forja.domain.venda.ItemVendaRepository;
+import br.com.forja.domain.venda.PagamentoVenda;
 import br.com.forja.domain.venda.Venda;
 import br.com.forja.domain.venda.VendaRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +47,9 @@ public class DashboardService {
                 long totalVendas = vendas.size();
 
                 BigDecimal valorTotalVendas = vendas.stream()
-                                .map(v -> v.getValorTotal() == null
+                                .map(v -> v.getValorLiquido() == null
                                                 ? BigDecimal.ZERO
-                                                : v.getValorTotal())
+                                                : v.getValorLiquido())
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
@@ -109,7 +110,7 @@ public class DashboardService {
                                                 v.getCriadoEm()
                                                                 .toLocalDate()
                                                                 .equals(hoje))
-                                .map(Venda::getValorTotal)
+                                .map(Venda::getValorLiquido)
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
@@ -121,7 +122,7 @@ public class DashboardService {
                                                 &&
                                                 YearMonth.from(
                                                                 v.getCriadoEm()).equals(mesAtual))
-                                .map(Venda::getValorTotal)
+                                .map(Venda::getValorLiquido)
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
@@ -202,7 +203,7 @@ public class DashboardService {
                                                 Collectors.groupingBy(
                                                                 venda -> venda.getCriadoEm().toLocalDate(),
                                                                 Collectors.mapping(
-                                                                                Venda::getValorTotal,
+                                                                                Venda::getValorLiquido,
                                                                                 Collectors.reducing(
                                                                                                 BigDecimal.ZERO,
                                                                                                 BigDecimal::add))))
@@ -236,7 +237,7 @@ public class DashboardService {
                                                 Collectors.groupingBy(
                                                                 venda -> YearMonth.from(venda.getCriadoEm()),
                                                                 Collectors.mapping(
-                                                                                Venda::getValorTotal,
+                                                                                Venda::getValorLiquido,
                                                                                 Collectors.reducing(
                                                                                                 BigDecimal.ZERO,
                                                                                                 BigDecimal::add))))
@@ -334,7 +335,7 @@ public class DashboardService {
                                 .filter(v -> v.getCriadoEm() != null)
                                 .filter(v -> YearMonth.from(
                                                 v.getCriadoEm()).equals(atual))
-                                .map(Venda::getValorTotal)
+                                .map(Venda::getValorLiquido)
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
@@ -344,7 +345,7 @@ public class DashboardService {
                                 .filter(v -> v.getCriadoEm() != null)
                                 .filter(v -> YearMonth.from(
                                                 v.getCriadoEm()).equals(anterior))
-                                .map(Venda::getValorTotal)
+                                .map(Venda::getValorLiquido)
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
@@ -380,7 +381,7 @@ public class DashboardService {
 
                 BigDecimal realizado = vendaRepository.findAll()
                                 .stream()
-                                .map(Venda::getValorTotal)
+                                .map(Venda::getValorLiquido)
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
@@ -448,7 +449,7 @@ public class DashboardService {
                                 .toList();
 
                 BigDecimal total = vendas.stream()
-                                .map(Venda::getValorTotal)
+                                .map(Venda::getValorLiquido)
                                 .reduce(
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
@@ -549,15 +550,17 @@ public class DashboardService {
 
         public List<ReceitaFormaPagamentoResponse> receitaPorFormaPagamento() {
 
-                return vendaRepository.findAll()
+                return itemVendaRepository.findAll()
                                 .stream()
+                                .flatMap(item -> item.getVenda()
+                                                .getPagamentos()
+                                                .stream())
                                 .collect(
                                                 Collectors.groupingBy(
-                                                                venda -> venda.getFormaPagamento() == null
-                                                                                ? "NÃO INFORMADO"
-                                                                                : venda.getFormaPagamento(),
+                                                                pagamento -> pagamento.getFormaPagamento()
+                                                                                .name(),
                                                                 Collectors.mapping(
-                                                                                Venda::getValorTotal,
+                                                                                PagamentoVenda::getValor,
                                                                                 Collectors.reducing(
                                                                                                 BigDecimal.ZERO,
                                                                                                 BigDecimal::add))))
