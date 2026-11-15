@@ -30,6 +30,38 @@ public class ClienteService {
                 return toResponse(cliente);
         }
 
+        public List<ClienteResponse> pesquisar(
+                        String termo) {
+
+                if (termo == null || termo.isBlank()) {
+
+                        return List.of();
+
+                }
+
+                List<Cliente> clientes;
+
+                if (termo.matches("\\d+")) {
+
+                        clientes = repository
+                                        .findTop20ByAtivoTrueAndCpfContaining(
+                                                        termo);
+
+                } else {
+
+                        clientes = repository
+                                        .findTop20ByAtivoTrueAndNomeContainingIgnoreCase(
+                                                        termo);
+
+                }
+
+                return clientes
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
+
+        }
+
         public ClienteResponse salvar(ClienteRequest request) {
 
                 Cliente cliente = Cliente.builder()

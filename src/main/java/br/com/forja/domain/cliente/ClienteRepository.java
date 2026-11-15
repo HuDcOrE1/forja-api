@@ -9,4 +9,10 @@ public interface ClienteRepository
 
     List<Cliente> findByAtivoTrue();
 
+    List<Cliente> findTop20ByAtivoTrueAndNomeContainingIgnoreCase(
+            String nome);
+
+    List<Cliente> findTop20ByAtivoTrueAndCpfContaining(
+            String cpf);
+
 }

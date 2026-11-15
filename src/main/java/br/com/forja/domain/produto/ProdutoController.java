@@ -25,6 +25,16 @@ public class ProdutoController {
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+        @GetMapping("/pesquisa")
+        public List<ProdutoResponse> pesquisar(
+                        @RequestParam String termo) {
+
+                return service.pesquisar(
+                                termo);
+
+        }
+
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
         @GetMapping("/{id}")
         public ProdutoResponse buscarPorId(
                         @PathVariable Long id) {

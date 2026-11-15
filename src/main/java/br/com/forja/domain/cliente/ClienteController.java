@@ -25,6 +25,16 @@ public class ClienteController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+    @GetMapping("/pesquisa")
+    public List<ClienteResponse> pesquisar(
+            @RequestParam String termo) {
+
+        return service.pesquisar(
+                termo);
+
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
     @GetMapping("/{id}")
     public ClienteResponse buscarPorId(
             @PathVariable Long id) {

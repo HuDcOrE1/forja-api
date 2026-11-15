@@ -23,6 +23,36 @@ public class ProdutoService {
                                 .toList();
         }
 
+        public List<ProdutoResponse> pesquisar(
+                        String termo) {
+
+                if (termo == null || termo.isBlank()) {
+
+                        return List.of();
+
+                }
+
+                List<Produto> produtos;
+
+                produtos = repository
+                                .findTop20ByAtivoTrueAndNomeContainingIgnoreCase(
+                                                termo);
+
+                if (produtos.isEmpty()) {
+
+                        produtos = repository
+                                        .findTop20ByAtivoTrueAndCodigoContainingIgnoreCase(
+                                                        termo);
+
+                }
+
+                return produtos
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
+
+        }
+
         public ProdutoResponse buscarPorId(Long id) {
 
                 Produto produto = repository.findById(id)

@@ -9,4 +9,10 @@ public interface ProdutoRepository
 
     List<Produto> findByAtivoTrue();
 
+    List<Produto> findTop20ByAtivoTrueAndNomeContainingIgnoreCase(
+            String nome);
+
+    List<Produto> findTop20ByAtivoTrueAndCodigoContainingIgnoreCase(
+            String codigo);
+
 }
