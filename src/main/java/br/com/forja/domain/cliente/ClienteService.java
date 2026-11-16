@@ -3,16 +3,41 @@ package br.com.forja.domain.cliente;
 import br.com.forja.domain.cliente.dto.ClienteRequest;
 import br.com.forja.domain.cliente.dto.ClienteResponse;
 import br.com.forja.exception.ClienteNaoEncontradoException;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ClienteService {
 
         private final ClienteRepository repository;
+
+        public Page<ClienteResponse> listar(
+                        int page,
+                        int size,
+                        String termo,
+                        Boolean ativo) {
+
+                Pageable pageable = PageRequest.of(
+                                page,
+                                size);
+
+                return repository.findAll(
+                                ClienteSpecification.filtrar(
+                                                termo,
+                                                ativo),
+                                pageable)
+                                .map(this::toResponse);
+
+        }
 
         public List<ClienteResponse> listar() {
 
@@ -22,47 +47,19 @@ public class ClienteService {
                                 .toList();
         }
 
-        public ClienteResponse buscarPorId(Long id) {
+        public ClienteResponse buscarPorId(
+                        Long id) {
 
                 Cliente cliente = repository.findById(id)
-                                .orElseThrow(() -> new ClienteNaoEncontradoException(id));
+                                .orElseThrow(
+                                                () -> new ClienteNaoEncontradoException(id));
 
                 return toResponse(cliente);
-        }
-
-        public List<ClienteResponse> pesquisar(
-                        String termo) {
-
-                if (termo == null || termo.isBlank()) {
-
-                        return List.of();
-
-                }
-
-                List<Cliente> clientes;
-
-                if (termo.matches("\\d+")) {
-
-                        clientes = repository
-                                        .findTop20ByAtivoTrueAndCpfContaining(
-                                                        termo);
-
-                } else {
-
-                        clientes = repository
-                                        .findTop20ByAtivoTrueAndNomeContainingIgnoreCase(
-                                                        termo);
-
-                }
-
-                return clientes
-                                .stream()
-                                .map(this::toResponse)
-                                .toList();
 
         }
 
-        public ClienteResponse salvar(ClienteRequest request) {
+        public ClienteResponse salvar(
+                        ClienteRequest request) {
 
                 Cliente cliente = Cliente.builder()
                                 .nome(request.nome())
@@ -74,7 +71,6 @@ public class ClienteService {
                                                 request.ativo() != null
                                                                 ? request.ativo()
                                                                 : true)
-
                                 .cep(request.cep())
                                 .logradouro(request.logradouro())
                                 .numero(request.numero())
@@ -82,12 +78,12 @@ public class ClienteService {
                                 .bairro(request.bairro())
                                 .cidade(request.cidade())
                                 .uf(request.uf())
-
                                 .build();
 
                 cliente = repository.save(cliente);
 
                 return toResponse(cliente);
+
         }
 
         public ClienteResponse atualizar(
@@ -95,29 +91,56 @@ public class ClienteService {
                         ClienteRequest request) {
 
                 Cliente cliente = repository.findById(id)
-                                .orElseThrow(() -> new ClienteNaoEncontradoException(id));
+                                .orElseThrow(
+                                                () -> new ClienteNaoEncontradoException(id));
 
-                cliente.setNome(request.nome());
-                cliente.setCpf(request.cpf());
-                cliente.setTelefone(request.telefone());
-                cliente.setEmail(request.email());
-                cliente.setCr(request.cr());
-                cliente.setAtivo(request.ativo());
+                cliente.setNome(
+                                request.nome());
 
-                cliente.setCep(request.cep());
-                cliente.setLogradouro(request.logradouro());
-                cliente.setNumero(request.numero());
-                cliente.setComplemento(request.complemento());
-                cliente.setBairro(request.bairro());
-                cliente.setCidade(request.cidade());
-                cliente.setUf(request.uf());
+                cliente.setCpf(
+                                request.cpf());
+
+                cliente.setTelefone(
+                                request.telefone());
+
+                cliente.setEmail(
+                                request.email());
+
+                cliente.setCr(
+                                request.cr());
+
+                cliente.setAtivo(
+                                request.ativo());
+
+                cliente.setCep(
+                                request.cep());
+
+                cliente.setLogradouro(
+                                request.logradouro());
+
+                cliente.setNumero(
+                                request.numero());
+
+                cliente.setComplemento(
+                                request.complemento());
+
+                cliente.setBairro(
+                                request.bairro());
+
+                cliente.setCidade(
+                                request.cidade());
+
+                cliente.setUf(
+                                request.uf());
 
                 cliente = repository.save(cliente);
 
                 return toResponse(cliente);
+
         }
 
-        public void excluir(Long id) {
+        public void excluir(
+                        Long id) {
 
                 Cliente cliente = repository.findById(id)
                                 .orElseThrow(
@@ -126,6 +149,7 @@ public class ClienteService {
                 cliente.setAtivo(false);
 
                 repository.save(cliente);
+
         }
 
         private ClienteResponse toResponse(
@@ -159,6 +183,10 @@ public class ClienteService {
 
                                 cliente.getCidade(),
 
-                                cliente.getUf());
+                                cliente.getUf()
+
+                );
+
         }
+
 }

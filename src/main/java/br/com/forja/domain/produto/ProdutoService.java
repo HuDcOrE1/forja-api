@@ -3,77 +3,71 @@ package br.com.forja.domain.produto;
 import br.com.forja.domain.produto.dto.ProdutoRequest;
 import br.com.forja.domain.produto.dto.ProdutoResponse;
 import br.com.forja.exception.ProdutoNaoEncontradoException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ProdutoService {
 
         private final ProdutoRepository repository;
+
         private final CategoriaProdutoRepository categoriaRepository;
 
-        public List<ProdutoResponse> listar() {
+        public Page<ProdutoResponse> listar(
+                        int page,
+                        int size,
+                        String termo,
+                        StatusEstoque statusEstoque) {
 
-                return repository.findByAtivoTrue()
-                                .stream()
-                                .map(this::toResponse)
-                                .toList();
+                Pageable pageable = PageRequest.of(
+                                page,
+                                size);
+
+                return repository.findAll(
+                                ProdutoSpecification.filtrar(
+                                                termo,
+                                                statusEstoque),
+                                pageable)
+                                .map(
+                                                this::toResponse);
         }
 
-        public List<ProdutoResponse> pesquisar(
-                        String termo) {
-
-                if (termo == null || termo.isBlank()) {
-
-                        return List.of();
-
-                }
-
-                List<Produto> produtos;
-
-                produtos = repository
-                                .findTop20ByAtivoTrueAndNomeContainingIgnoreCase(
-                                                termo);
-
-                if (produtos.isEmpty()) {
-
-                        produtos = repository
-                                        .findTop20ByAtivoTrueAndCodigoContainingIgnoreCase(
-                                                        termo);
-
-                }
-
-                return produtos
-                                .stream()
-                                .map(this::toResponse)
-                                .toList();
-
-        }
-
-        public ProdutoResponse buscarPorId(Long id) {
+        public ProdutoResponse buscarPorId(
+                        Long id) {
 
                 Produto produto = repository.findById(id)
                                 .orElseThrow(
                                                 () -> new ProdutoNaoEncontradoException(id));
 
                 return toResponse(produto);
+
         }
 
         public ProdutoResponse salvar(
                         ProdutoRequest request) {
 
                 CategoriaProduto categoria = categoriaRepository.findById(
-                                request.categoriaId()).orElseThrow();
+                                request.categoriaId())
+                                .orElseThrow();
 
                 Produto produto = Produto.builder()
-                                .codigo(request.codigo())
-                                .nome(request.nome())
-                                .descricao(request.descricao())
-                                .categoria(categoria)
-                                .marca(request.marca())
+                                .codigo(
+                                                request.codigo())
+                                .nome(
+                                                request.nome())
+                                .descricao(
+                                                request.descricao())
+                                .categoria(
+                                                categoria)
+                                .marca(
+                                                request.marca())
                                 .unidadeMedida(
                                                 request.unidadeMedida())
                                 .estoqueAtual(
@@ -93,6 +87,7 @@ public class ProdutoService {
                 produto = repository.save(produto);
 
                 return toResponse(produto);
+
         }
 
         public ProdutoResponse atualizar(
@@ -104,7 +99,8 @@ public class ProdutoService {
                                                 () -> new ProdutoNaoEncontradoException(id));
 
                 CategoriaProduto categoria = categoriaRepository.findById(
-                                request.categoriaId()).orElseThrow();
+                                request.categoriaId())
+                                .orElseThrow();
 
                 produto.setCodigo(
                                 request.codigo());
@@ -142,9 +138,11 @@ public class ProdutoService {
                 produto = repository.save(produto);
 
                 return toResponse(produto);
+
         }
 
-        public void excluir(Long id) {
+        public void excluir(
+                        Long id) {
 
                 Produto produto = repository.findById(id)
                                 .orElseThrow(
@@ -153,6 +151,7 @@ public class ProdutoService {
                 produto.setAtivo(false);
 
                 repository.save(produto);
+
         }
 
         private ProdutoResponse toResponse(
@@ -184,7 +183,10 @@ public class ProdutoService {
 
                                 produto.getValorVenda(),
 
-                                produto.getAtivo());
+                                produto.getAtivo()
+
+                );
+
         }
 
 }

@@ -2,13 +2,18 @@ package br.com.forja.domain.produto;
 
 import br.com.forja.domain.produto.dto.ProdutoRequest;
 import br.com.forja.domain.produto.dto.ProdutoResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+
+import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/produtos")
@@ -19,18 +24,23 @@ public class ProdutoController {
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
         @GetMapping
-        public List<ProdutoResponse> listar() {
+        public Page<ProdutoResponse> listar(
 
-                return service.listar();
-        }
+                        @RequestParam(defaultValue = "0") int page,
 
-        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
-        @GetMapping("/pesquisa")
-        public List<ProdutoResponse> pesquisar(
-                        @RequestParam String termo) {
+                        @RequestParam(defaultValue = "20") int size,
 
-                return service.pesquisar(
-                                termo);
+                        @RequestParam(required = false) String termo,
+
+                        @RequestParam(required = false) StatusEstoque statusEstoque
+
+        ) {
+
+                return service.listar(
+                                page,
+                                size,
+                                termo,
+                                statusEstoque);
 
         }
 
@@ -40,6 +50,7 @@ public class ProdutoController {
                         @PathVariable Long id) {
 
                 return service.buscarPorId(id);
+
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
@@ -47,7 +58,9 @@ public class ProdutoController {
         public ProdutoResponse salvar(
                         @Valid @RequestBody ProdutoRequest request) {
 
-                return service.salvar(request);
+                return service.salvar(
+                                request);
+
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
@@ -60,6 +73,7 @@ public class ProdutoController {
                 return service.atualizar(
                                 id,
                                 request);
+
         }
 
         @PreAuthorize("hasRole('ADMIN')")
@@ -72,5 +86,7 @@ public class ProdutoController {
                 return ResponseEntity
                                 .noContent()
                                 .build();
+
         }
+
 }

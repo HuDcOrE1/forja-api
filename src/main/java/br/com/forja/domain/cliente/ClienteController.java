@@ -2,13 +2,18 @@ package br.com.forja.domain.cliente;
 
 import br.com.forja.domain.cliente.dto.ClienteRequest;
 import br.com.forja.domain.cliente.dto.ClienteResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+
+import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/clientes")
@@ -19,18 +24,23 @@ public class ClienteController {
 
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
     @GetMapping
-    public List<ClienteResponse> listar() {
+    public Page<ClienteResponse> listar(
 
-        return service.listar();
-    }
+            @RequestParam(defaultValue = "0") int page,
 
-    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
-    @GetMapping("/pesquisa")
-    public List<ClienteResponse> pesquisar(
-            @RequestParam String termo) {
+            @RequestParam(defaultValue = "20") int size,
 
-        return service.pesquisar(
-                termo);
+            @RequestParam(required = false) String termo,
+
+            @RequestParam(required = false) Boolean ativo
+
+    ) {
+
+        return service.listar(
+                page,
+                size,
+                termo,
+                ativo);
 
     }
 
@@ -40,23 +50,36 @@ public class ClienteController {
             @PathVariable Long id) {
 
         return service.buscarPorId(id);
+
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
     @PostMapping
     public ClienteResponse salvar(
-            @Valid @RequestBody ClienteRequest request) {
 
-        return service.salvar(request);
+            @Valid @RequestBody ClienteRequest request
+
+    ) {
+
+        return service.salvar(
+                request);
+
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
     @PutMapping("/{id}")
     public ClienteResponse atualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody ClienteRequest request) {
 
-        return service.atualizar(id, request);
+            @PathVariable Long id,
+
+            @Valid @RequestBody ClienteRequest request
+
+    ) {
+
+        return service.atualizar(
+                id,
+                request);
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -66,6 +89,10 @@ public class ClienteController {
 
         service.excluir(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .noContent()
+                .build();
+
     }
+
 }
