@@ -1,9 +1,8 @@
 spring:
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/forja
-    username: postgres
-    password: 123
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/forja}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:123}
 
   jpa:
     hibernate:
