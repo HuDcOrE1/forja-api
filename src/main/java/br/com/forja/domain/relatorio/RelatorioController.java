@@ -239,17 +239,45 @@ public class RelatorioController {
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
         @GetMapping("/vendas/export/pdf")
-        public ResponseEntity<ByteArrayResource> exportarVendasPdf() {
+        public ResponseEntity<ByteArrayResource> exportarVendasPdf(
+
+                        @RequestParam(required = false) Long clienteId,
+
+                        @RequestParam(required = false) String formaPagamento,
+
+                        @RequestParam(required = false) String status,
+
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
+
+                List<RelatorioVendaResponse> vendas = service.vendas(
+
+                                new FiltroVendaRequest(
+                                                clienteId,
+                                                formaPagamento,
+                                                status,
+                                                inicio,
+                                                fim),
+
+                                0,
+                                Integer.MAX_VALUE,
+                                "dataVenda",
+                                "DESC");
+
+                FiltroVendaRequest filtro = new FiltroVendaRequest(
+                                clienteId,
+                                formaPagamento,
+                                status,
+                                inicio,
+                                fim);
 
                 byte[] arquivo = exportService.exportarVendasPdf(
-                                service.vendas(
-                                                null,
-                                                0,
-                                                Integer.MAX_VALUE,
-                                                "dataVenda",
-                                                "DESC"));
+                                vendas,
+                                filtro);
 
-                ByteArrayResource resource = new ByteArrayResource(arquivo);
+                ByteArrayResource resource = new ByteArrayResource(
+                                arquivo);
 
                 return ResponseEntity.ok()
                                 .header(
@@ -259,7 +287,9 @@ public class RelatorioController {
                                                 MediaType.APPLICATION_PDF)
                                 .contentLength(
                                                 arquivo.length)
-                                .body(resource);
+                                .body(
+                                                resource);
+
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")

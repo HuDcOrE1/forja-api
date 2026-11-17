@@ -4,6 +4,10 @@ spring:
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:123}
 
+  logging:
+  level:
+    com.zaxxer.hikari: DEBUG
+
   jpa:
     hibernate:
       ddl-auto: validate
