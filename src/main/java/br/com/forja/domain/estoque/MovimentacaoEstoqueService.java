@@ -6,7 +6,13 @@ import br.com.forja.domain.estoque.dto.SaidaEstoqueRequest;
 import br.com.forja.domain.produto.Produto;
 import br.com.forja.domain.produto.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -84,12 +90,25 @@ public class MovimentacaoEstoqueService {
                                 movimentacao);
         }
 
-        public List<MovimentacaoEstoqueResponse> historico() {
+        public Page<MovimentacaoEstoqueResponse> historico(
+                        int page,
+                        int size,
+                        Long produtoId,
+                        String tipo) {
 
-                return repository.findAll()
-                                .stream()
-                                .map(this::toResponse)
-                                .toList();
+                Pageable pageable = PageRequest.of(
+                                page,
+                                size);
+
+                return repository.findAll(
+                                MovimentacaoEstoqueSpecification
+                                                .filtrar(
+                                                                produtoId,
+                                                                tipo),
+                                pageable)
+                                .map(
+                                                this::toResponse);
+
         }
 
         public List<MovimentacaoEstoqueResponse> historicoProduto(

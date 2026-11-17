@@ -5,6 +5,8 @@ import br.com.forja.domain.estoque.dto.MovimentacaoEstoqueResponse;
 import br.com.forja.domain.estoque.dto.SaidaEstoqueRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,9 +37,24 @@ public class MovimentacaoEstoqueController {
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','OPERADOR_ESTOQUE')")
         @GetMapping("/historico")
-        public List<MovimentacaoEstoqueResponse> historico() {
+        public Page<MovimentacaoEstoqueResponse> historico(
 
-                return service.historico();
+                        @RequestParam(defaultValue = "0") int page,
+
+                        @RequestParam(defaultValue = "20") int size,
+
+                        @RequestParam(required = false) Long produtoId,
+
+                        @RequestParam(required = false) String tipo
+
+        ) {
+
+                return service.historico(
+                                page,
+                                size,
+                                produtoId,
+                                tipo);
+
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','OPERADOR_ESTOQUE')")

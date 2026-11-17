@@ -28,14 +28,14 @@ public class AuthController {
                 Usuario usuario = usuarioRepository
                                 .findByEmail(request.email())
                                 .orElseThrow(() -> new RuntimeException(
-                                                "Usuário não encontrado"));
+                                                "Usuário ou Senha não confere"));
 
                 if (!passwordEncoder.matches(
                                 request.senha(),
                                 usuario.getSenha())) {
 
                         throw new RuntimeException(
-                                        "Senha inválida");
+                                        "Usuário ou Senha não confere");
                 }
 
                 List<String> roles = usuario.getPerfis()

@@ -19,6 +19,10 @@ import br.com.forja.domain.venda.dto.VendaResponse;
 import br.com.forja.exception.VendaNaoEncontradaException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,12 +44,25 @@ public class VendaService {
 
         private final MovimentacaoEstoqueService movimentacaoEstoqueService;
 
-        public List<VendaResponse> listar() {
+        public Page<VendaResponse> listar(
+                        int page,
+                        int size,
+                        Long clienteId,
+                        String status,
+                        String termo) {
 
-                return vendaRepository.findAllByOrderByCriadoEmDesc()
-                                .stream()
-                                .map(this::toResponse)
-                                .toList();
+                Pageable pageable = PageRequest.of(
+                                page,
+                                size);
+
+                return vendaRepository.findAll(
+                                VendaSpecification.filtrar(
+                                                clienteId,
+                                                status,
+                                                termo),
+                                pageable)
+                                .map(this::toResponse);
+
         }
 
         public VendaResponse buscarPorId(Long id) {

@@ -5,6 +5,8 @@ import br.com.forja.domain.venda.dto.VendaRequest;
 import br.com.forja.domain.venda.dto.VendaResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +21,27 @@ public class VendaController {
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
         @GetMapping
-        public List<VendaResponse> listar() {
+        public Page<VendaResponse> listar(
 
-                return service.listar();
+                        @RequestParam(defaultValue = "0") int page,
+
+                        @RequestParam(defaultValue = "20") int size,
+
+                        @RequestParam(required = false) Long clienteId,
+
+                        @RequestParam(required = false) String status,
+
+                        @RequestParam(required = false) String termo
+
+        ) {
+
+                return service.listar(
+                                page,
+                                size,
+                                clienteId,
+                                status,
+                                termo);
+
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
