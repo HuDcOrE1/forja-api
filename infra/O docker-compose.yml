@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:17
+
+    container_name: forja-postgres
+
+    restart: always
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - ./database:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+  forja-api:
+    build:
+      context: ../forja-api
+
+    container_name: forja-api
+
+    restart: always
+
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "8080:8080"
+
+  forja-web:
+    build:
+      context: ../forja-web
+
+    container_name: forja-web
+
+    restart: always
+
+    depends_on:
+      - forja-api
+
+    ports:
+      - "80:80"
+
+networks:
+  default:
+    name: forja-network
