@@ -19,6 +19,15 @@ public class CorsConfig {
                 config.addAllowedOrigin(
                                 "http://localhost:4200");
 
+                config.addAllowedOrigin(
+                                "http://clubeforja.tech");
+
+                config.addAllowedOrigin(
+                                "https://clubeforja.tech");
+
+                config.addAllowedOrigin(
+                                "http://179.66.149.197");
+
                 config.addAllowedHeader("*");
 
                 config.addAllowedMethod("*");
