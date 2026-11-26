@@ -9,6 +9,9 @@ import br.com.forja.domain.raia.RaiaRepository;
 import br.com.forja.exception.AgendamentoNaoEncontradoException;
 import br.com.forja.exception.ConflitoAgendamentoException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,12 +25,14 @@ public class AgendamentoService {
         private final ClienteRepository clienteRepository;
         private final RaiaRepository raiaRepository;
 
-        public List<AgendamentoResponse> listar() {
+        public Page<AgendamentoResponse> listar(int page, int size, String termo) {
 
-                return repository.findAll()
-                                .stream()
-                                .map(this::toResponse)
-                                .toList();
+                Pageable pageable = PageRequest.of(page, size);
+
+                return repository.findAll(
+                                AgendamentoSpecification.filtrar(termo),
+                                pageable)
+                                .map(this::toResponse);
         }
 
         public AgendamentoResponse buscarPorId(

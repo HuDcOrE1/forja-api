@@ -1,6 +1,7 @@
 package br.com.forja.domain.produto;
 
 import org.springframework.data.jpa.domain.Specification;
+import br.com.forja.shared.search.TextoBusca;
 
 import jakarta.persistence.criteria.Predicate;
 
@@ -27,21 +28,15 @@ public class ProdutoSpecification {
             if (termo != null
                     && !termo.isBlank()) {
 
-                Predicate nome = cb.like(
-                        cb.lower(
-                                root.get("nome")),
-                        "%"
-                                + termo
-                                        .toLowerCase()
-                                + "%");
+                Predicate nome = TextoBusca.contemSemAcentos(
+                        cb,
+                        root.get("nome"),
+                        termo);
 
-                Predicate codigo = cb.like(
-                        cb.lower(
-                                root.get("codigo")),
-                        "%"
-                                + termo
-                                        .toLowerCase()
-                                + "%");
+                Predicate codigo = TextoBusca.contemSemAcentos(
+                        cb,
+                        root.get("codigo"),
+                        termo);
 
                 predicates.add(
                         cb.or(

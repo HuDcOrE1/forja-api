@@ -4,6 +4,8 @@ import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import br.com.forja.shared.search.TextoBusca;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,25 +47,19 @@ public class VendaSpecification {
             if (termo != null
                     && !termo.isBlank()) {
 
-                String pesquisa = "%"
-                        + termo.toLowerCase()
-                        + "%";
-
                 predicates.add(
 
                         cb.or(
 
-                                cb.like(
-                                        cb.lower(
-                                                root.get("cliente")
-                                                        .get("nome")),
-                                        pesquisa),
+                                TextoBusca.contemSemAcentos(
+                                        cb,
+                                        root.get("cliente").get("nome"),
+                                        termo),
 
-                                cb.like(
-                                        cb.lower(
-                                                root.get("usuario")
-                                                        .get("nome")),
-                                        pesquisa)
+                                TextoBusca.contemSemAcentos(
+                                        cb,
+                                        root.get("usuario").get("nome"),
+                                        termo)
 
                         )
 

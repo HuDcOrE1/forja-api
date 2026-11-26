@@ -3,6 +3,7 @@ package br.com.forja.domain.cliente;
 import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
+import br.com.forja.shared.search.TextoBusca;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,29 +33,24 @@ public class ClienteSpecification {
             if (termo != null
                     && !termo.isBlank()) {
 
-                String termoPesquisa = "%" +
-                        termo.trim()
-                                .toLowerCase()
-                        + "%";
-
-                Predicate nome = cb.like(
-                        cb.lower(
-                                root.get("nome")),
-                        termoPesquisa);
+                Predicate nome = TextoBusca.contemSemAcentos(
+                        cb,
+                        root.get("nome"),
+                        termo);
 
                 Predicate cpf = cb.like(
                         root.get("cpf"),
                         termo.trim());
 
-                Predicate email = cb.like(
-                        cb.lower(
-                                root.get("email")),
-                        termoPesquisa);
+                Predicate email = TextoBusca.contemSemAcentos(
+                        cb,
+                        root.get("email"),
+                        termo);
 
-                Predicate cr = cb.like(
-                        cb.lower(
-                                root.get("cr")),
-                        termoPesquisa);
+                Predicate cr = TextoBusca.contemSemAcentos(
+                        cb,
+                        root.get("cr"),
+                        termo);
 
                 predicates.add(
                         cb.or(

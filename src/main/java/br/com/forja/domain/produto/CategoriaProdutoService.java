@@ -3,6 +3,9 @@ package br.com.forja.domain.produto;
 import br.com.forja.domain.produto.dto.CategoriaProdutoRequest;
 import br.com.forja.domain.produto.dto.CategoriaProdutoResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,7 +17,17 @@ public class CategoriaProdutoService {
 
     private final CategoriaProdutoRepository repository;
 
-    public List<CategoriaProdutoResponse> listar() {
+    public Page<CategoriaProdutoResponse> listar(int page, int size, String termo) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return repository.findAll(
+                CategoriaProdutoSpecification.filtrar(termo),
+                pageable)
+                .map(this::toResponse);
+    }
+
+    public List<CategoriaProdutoResponse> listarOpcoes() {
 
         return repository.findAll()
                 .stream()

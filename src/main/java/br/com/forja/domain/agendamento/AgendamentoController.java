@@ -4,10 +4,9 @@ import br.com.forja.domain.agendamento.dto.AgendamentoRequest;
 import br.com.forja.domain.agendamento.dto.AgendamentoResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/agendamentos")
@@ -18,9 +17,12 @@ public class AgendamentoController {
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")
         @GetMapping
-        public List<AgendamentoResponse> listar() {
+        public Page<AgendamentoResponse> listar(
+                        @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "20") int size,
+                        @RequestParam(required = false) String termo) {
 
-                return service.listar();
+                return service.listar(page, size, termo);
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")

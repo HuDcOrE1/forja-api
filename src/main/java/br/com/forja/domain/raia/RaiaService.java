@@ -4,6 +4,9 @@ import br.com.forja.domain.raia.dto.RaiaRequest;
 import br.com.forja.domain.raia.dto.RaiaResponse;
 import br.com.forja.exception.RaiaNaoEncontradaException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,7 +18,17 @@ public class RaiaService {
 
         private final RaiaRepository repository;
 
-        public List<RaiaResponse> listar() {
+        public Page<RaiaResponse> listar(int page, int size, String termo) {
+
+                Pageable pageable = PageRequest.of(page, size);
+
+                return repository.findAll(
+                                RaiaSpecification.filtrar(termo),
+                                pageable)
+                                .map(this::toResponse);
+        }
+
+        public List<RaiaResponse> listarOpcoes() {
 
                 return repository.findByAtivaTrue()
                                 .stream()

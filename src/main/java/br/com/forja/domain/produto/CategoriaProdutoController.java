@@ -4,6 +4,7 @@ import br.com.forja.domain.produto.dto.CategoriaProdutoRequest;
 import br.com.forja.domain.produto.dto.CategoriaProdutoResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,19 @@ public class CategoriaProdutoController {
 
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
     @GetMapping
-    public List<CategoriaProdutoResponse> listar() {
+    public Page<CategoriaProdutoResponse> listar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String termo) {
 
-        return service.listar();
+        return service.listar(page, size, termo);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")
+    @GetMapping("/opcoes")
+    public List<CategoriaProdutoResponse> listarOpcoes() {
+
+        return service.listarOpcoes();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE')")

@@ -4,6 +4,7 @@ import br.com.forja.domain.raia.dto.RaiaRequest;
 import br.com.forja.domain.raia.dto.RaiaResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,19 @@ public class RaiaController {
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")
         @GetMapping
-        public List<RaiaResponse> listar() {
+        public Page<RaiaResponse> listar(
+                        @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "20") int size,
+                        @RequestParam(required = false) String termo) {
 
-                return service.listar();
+                return service.listar(page, size, termo);
+        }
+
+        @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")
+        @GetMapping("/opcoes")
+        public List<RaiaResponse> listarOpcoes() {
+
+                return service.listarOpcoes();
         }
 
         @PreAuthorize("hasAnyRole('ADMIN','GERENTE','ATENDENTE','INSTRUTOR')")

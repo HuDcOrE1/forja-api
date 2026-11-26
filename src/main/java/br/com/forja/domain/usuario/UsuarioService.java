@@ -7,6 +7,9 @@ import br.com.forja.domain.usuario.dto.UsuarioResponse;
 import br.com.forja.exception.UsuarioNaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +27,12 @@ public class UsuarioService {
 
         private final PasswordEncoder passwordEncoder;
 
-        public java.util.List<UsuarioResponse> listar() {
+        public Page<UsuarioResponse> listar(int page, int size) {
 
-                return repository.findAll()
-                                .stream()
-                                .map(this::toResponse)
-                                .toList();
+                Pageable pageable = PageRequest.of(page, size);
+
+                return repository.findAll(pageable)
+                                .map(this::toResponse);
 
         }
 
